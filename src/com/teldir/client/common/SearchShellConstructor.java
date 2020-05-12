@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 public class SearchShellConstructor {
     public static Shell construct(Display display) {
         Shell shell = new Shell(display);
-        shell.setText("Natural Person Shell");
+        shell.setText("Search Shell");
         shell.setSize(900, 300);
         shell.setLayout(new GridLayout(3, false));
 

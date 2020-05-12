@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 public class ListShellConstructor {
     public static Shell construct(Display display) {
         Shell shell = new Shell(display);
-        shell.setText("Natural Person Shell");
+        shell.setText("List Shell");
         shell.setSize(900, 600);
         shell.setLayout(new GridLayout(7, false));
 

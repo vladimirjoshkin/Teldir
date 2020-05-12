@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 public class PhoneNumberShellConstructor {
     public static Shell construct(Display display) {
         Shell shell = new Shell(display);
-        shell.setText("Natural Person Shell");
+        shell.setText("Phone Number Shell");
         shell.setSize(900, 320);
         shell.setLayout(new GridLayout(4, false));
 

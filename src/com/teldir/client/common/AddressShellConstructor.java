@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.*;
 public class AddressShellConstructor {
     public static Shell construct(Display display) {
         Shell shell = new Shell(display);
-        shell.setText("Natural Person Shell");
+        shell.setText("Address Shell");
         shell.setSize(900, 360);
         shell.setLayout(new GridLayout(3, false));
 
