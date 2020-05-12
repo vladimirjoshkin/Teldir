@@ -1,14 +1,21 @@
 package com.teldir.core;
 
 public class LegalEntity {
+    private int id;
     private String fullName;
     private String address;
 
-    public LegalEntity(String fullName) {
+    public LegalEntity(int id) {
+        this.id = id;
+    }
+
+    public LegalEntity(int id, String fullName) {
+        this.id = id;
         this.fullName = fullName;
     }
 
-    public LegalEntity(String fullName, String address) {
+    public LegalEntity(int id, String fullName, String address) {
+        this.id = id;
         this.fullName = fullName;
         this.address = address;
     }
