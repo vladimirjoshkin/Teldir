@@ -1,6 +1,7 @@
 package com.teldir.client.common;
 
 import com.sun.rowset.internal.Row;
+import com.teldir.core.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,14 +23,28 @@ public class NaturalPersonShellConstructor {
         txtFullName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
         new Label(shell, SWT.NONE);
 
-        Text txtFirstName = new Text(shell, SWT.BORDER);
+        Text txtFirstName = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
         txtFirstName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-        Text txtLastName = new Text(shell, SWT.BORDER);
+        Text txtLastName = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
         txtLastName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-        Text txtPatronymic = new Text(shell, SWT.BORDER);
+        Text txtPatronymic = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
         txtPatronymic.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+
+        txtFullName.addListener(SWT.FocusOut, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                String[] fullName = StringUtils.deleteDoubleSpaces(txtFullName.getText()).split(" ");
+                try {
+                    txtFirstName.setText(fullName[0]);
+                    txtLastName.setText(fullName[1]);
+                    txtPatronymic.setText(fullName[2]);
+                } catch (IndexOutOfBoundsException ex) {
+                    // ignore
+                }
+            }
+        });
 
         Label lblDOB = new Label(shell, SWT.NONE);
         lblDOB.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
