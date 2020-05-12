@@ -2,6 +2,9 @@ package com.teldir.core;
 
 public class StringUtils {
     public static String deleteDoubleSpaces(String str) {
-        return str.replace("  ", " ");
+        while(str.contains("  ")) {
+            str = str.replace("  ", " ");
+        }
+        return str;
     }
 }
