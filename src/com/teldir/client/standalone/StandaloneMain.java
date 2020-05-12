@@ -15,9 +15,7 @@ public class StandaloneMain {
     private static Shell shell = new Shell(display);
 
     public static void main(String[] args) {
-        System.out.println(PROGRAM_NAME +
-                " v" + Integer.toString(VERSION_MAJOR) + "." + Integer.toString(VERSION_MINOR) +
-                " ("+ PROGRAM_MODE + ") " + "runned.");
+        System.out.println(PROGRAM_NAME + " v" + VERSION_MAJOR + "." + VERSION_MINOR + " ("+ PROGRAM_MODE + ") " + "runned.");
 
         System.out.println("GUI Main.");
 
@@ -54,7 +52,7 @@ public class StandaloneMain {
             }
         });
 
-        /* Searator */
+        /* Separator */
         new MenuItem(fileSubmenu, SWT.SEPARATOR);
 
         MenuItem exitItem = new MenuItem(fileSubmenu, SWT.PUSH);
