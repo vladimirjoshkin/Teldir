@@ -82,4 +82,8 @@ public class AddressShellConstructor {
 
         return shell;
     }
+
+    public static String askAddress(Shell addressShell) {
+        return "Work in progress";
+    }
 }
