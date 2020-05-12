@@ -49,7 +49,7 @@ public class AddressShellConstructor {
         comboCountry.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                comboDistrict.setItems(DBInterfaceProvider.getDistrictNames(comboCountry.getItem(comboCountry.getSelectionIndex())));
+                comboDistrict.setItems(DBInterfaceProvider.getDistrictNames(comboCountry.getText()));
             }
 
             @Override
@@ -71,7 +71,7 @@ public class AddressShellConstructor {
         comboDistrict.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                comboCity.setItems(DBInterfaceProvider.getCityNames(comboDistrict.getItem(comboDistrict.getSelectionIndex())));
+                comboCity.setItems(DBInterfaceProvider.getCityNames(comboDistrict.getText()));
             }
 
             @Override
