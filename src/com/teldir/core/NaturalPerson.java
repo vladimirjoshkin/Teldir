@@ -3,6 +3,7 @@ package com.teldir.core;
 import java.util.ArrayList;
 
 public class NaturalPerson {
+    private int id;
     private String firstName;
     private String familyName;
     private String patronymic;
@@ -11,13 +12,19 @@ public class NaturalPerson {
 
     private ArrayList<String> phoneNumbers;
 
-    public NaturalPerson(String firstName, String familyName, String patronymic) {
+    public NaturalPerson(int id) {
+        this.id = id;
+    }
+
+    public NaturalPerson(int id, String firstName, String familyName, String patronymic) {
+        this.id = id;
         this.firstName = firstName;
         this.familyName = familyName;
         this.patronymic = patronymic;
     }
 
-    public NaturalPerson(String firstName, String familyName, String patronymic, String livingAddress) {
+    public NaturalPerson(int id, String firstName, String familyName, String patronymic, String livingAddress) {
+        this.id = id;
         this.firstName = firstName;
         this.familyName = familyName;
         this.patronymic = patronymic;
