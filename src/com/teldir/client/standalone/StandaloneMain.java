@@ -16,7 +16,7 @@ public class StandaloneMain {
 
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + VERSION_MAJOR + "." + VERSION_MINOR + " ("+ PROGRAM_MODE + ") " + "runned.");
-
+        DBInterfaceProvider.initializeData();
         System.out.println("GUI Main.");
 
         shell.setText(PROGRAM_NAME);
