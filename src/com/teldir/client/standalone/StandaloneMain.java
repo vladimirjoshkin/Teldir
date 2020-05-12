@@ -107,6 +107,56 @@ public class StandaloneMain {
             }
         });
 
+        MenuItem debugAddressShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
+        debugAddressShellItem.setText("Show Address Shell...");
+        debugAddressShellItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Shell debugAddressShell = AddressShellConstructor.construct(display);
+                debugAddressShell.open();
+            }
+        });
+
+        MenuItem debugLegalEntityShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
+        debugLegalEntityShellItem.setText("Show Legal Entity Shell...");
+        debugLegalEntityShellItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Shell debugLegalEntityShell = LegalEntityShellConstructor.construct(display);
+                debugLegalEntityShell.open();
+            }
+        });
+
+        MenuItem debugListShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
+        debugListShellItem.setText("Show List Shell...");
+        debugListShellItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Shell debugListShell = ListShellConstructor.construct(display);
+                debugListShell.open();
+            }
+        });
+
+        MenuItem debugPhoneNumberShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
+        debugPhoneNumberShellItem.setText("Show Phone Number Shell...");
+        debugPhoneNumberShellItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Shell debugPhoneNumberShell = PhoneNumberShellConstructor.construct(display);
+                debugPhoneNumberShell.open();
+            }
+        });
+
+        MenuItem debugSearchShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
+        debugSearchShellItem.setText("Show Search Shell...");
+        debugSearchShellItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Shell debugSearchShell = SearchShellConstructor.construct(display);
+                debugSearchShell.open();
+            }
+        });
+
         shell.setSize(200, 200);
         shell.open();
 
