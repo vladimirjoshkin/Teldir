@@ -31,6 +31,36 @@ public class CityList {
         return null;
     }
 
+    public static String[] toArray() {
+        String[] stringArray = new String[list.size()];
+        for(int i = 0; i < list.size(); i++) {
+            stringArray[i] = list.get(i).getName();
+        }
+        return stringArray;
+    }
+
+    private static int countCities(Country country) {
+        int count = 0;
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getDistrict().getCountry().isSame(country)) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    public static String[] toArray(Country country) {
+        String[] stringArray = new String[countCities(country)];
+        int arrIndex = 0;
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getDistrict().getCountry().isSame(country)) {
+                stringArray[arrIndex] = list.get(i).getName();
+                arrIndex += 1;
+            }
+        }
+        return stringArray;
+    }
+
     private static int countCities(District district) {
         int count = 0;
         for(int i = 0; i < list.size(); i++) {
@@ -52,7 +82,7 @@ public class CityList {
         }
         return stringArray;
     }
-
+    /*
     private static int[] toArrayLinear(District district) {
         int[] intArray = new int[countCities(district)];
         int arrIndex = 0;
@@ -69,4 +99,5 @@ public class CityList {
         int[] linearArray = toArrayLinear(district);
         return get(linearArray[linear]);
     }
+    */
 }

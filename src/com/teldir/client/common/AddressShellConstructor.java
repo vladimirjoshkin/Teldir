@@ -39,18 +39,17 @@ public class AddressShellConstructor {
         Button btnCountryNew = new Button(shell, SWT.NONE);
         btnCountryNew.setText("New Country...");
 
-        Label lblDistric = new Label(shell, SWT.NONE);
-        lblDistric.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblDistric.setText("Ditrict");
+        Label lblDistrict = new Label(shell, SWT.NONE);
+        lblDistrict.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblDistrict.setText("District");
 
         Combo comboDistrict = new Combo(shell, SWT.NONE);
         comboDistrict.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        Country selectedCountry = null;
         comboCountry.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                comboDistrict.setItems(DBInterfaceProvider.getDistrictNamesByLinearSelection(comboCountry.getSelectionIndex()));
+                comboDistrict.setItems(DBInterfaceProvider.getDistrictNames(comboCountry.getItem(comboCountry.getSelectionIndex())));
             }
 
             @Override
@@ -60,7 +59,7 @@ public class AddressShellConstructor {
         });
 
         Button btnDistrictNew = new Button(shell, SWT.NONE);
-        btnDistrictNew.setText("New Disctrict...");
+        btnDistrictNew.setText("New District...");
 
         Label lblCity = new Label(shell, SWT.NONE);
         lblCity.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -72,7 +71,7 @@ public class AddressShellConstructor {
         comboDistrict.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                comboCity.setItems();
+                comboCity.setItems(DBInterfaceProvider.getCityNames(comboDistrict.getItem(comboDistrict.getSelectionIndex())));
             }
 
             @Override

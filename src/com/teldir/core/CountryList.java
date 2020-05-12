@@ -39,6 +39,7 @@ public class CountryList {
         return stringArray;
     }
 
+    /*
     private static int[] toArrayLinear() {
         int[] intArray = new int[list.size()];
         for(int i = 0; i < list.size(); i++) {
@@ -51,4 +52,5 @@ public class CountryList {
         int[] linearArray = toArrayLinear();
         return get(linearArray[linear]);
     }
+    */
 }

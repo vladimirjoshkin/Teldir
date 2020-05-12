@@ -61,6 +61,7 @@ public class DistrictList {
         return stringArray;
     }
 
+    /*
     private static int[] toArrayLinear(Country country) {
         int[] intArray = new int[countDistricts(country)];
         int arrIndex = 0;
@@ -77,4 +78,5 @@ public class DistrictList {
         int[] linearArray = toArrayLinear(country);
         return get(linearArray[linear]);
     }
+    */
 }

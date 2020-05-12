@@ -29,11 +29,12 @@ public class DBInterfaceProvider {
 
         DistrictList.add(42801, CountryList.get(428), "Ilukstes novads");
         DistrictList.add(42802, CountryList.get(428), "Daugavpils novads");
-        DistrictList.add(42802, CountryList.get(428), "Riga");
+        DistrictList.add(42803, CountryList.get(428), "Riga");
     }
 
     private static void initializeCityList() {
         CityList.add(643011, DistrictList.get(64301), "Irkutsk city");
+        CityList.add(643012, DistrictList.get(64301), "Angarsk");
         CityList.add(643021, DistrictList.get(64302), "Moscow city");
         CityList.add(643031, DistrictList.get(64303), "St. Peterburg");
 
@@ -48,6 +49,35 @@ public class DBInterfaceProvider {
         return CountryList.toArray();
     }
 
+    public static String[] getDistrictNames() {
+        return DistrictList.toArray();
+    }
+
+    public static String[] getDistrictNames(Country country) {
+        return DistrictList.toArray(country);
+    }
+
+    public static String[] getDistrictNames(String countryName) {
+        return DistrictList.toArray(CountryList.get(countryName));
+    }
+
+    public static String[] getCityNames() {
+        return CityList.toArray();
+    }
+
+    public static String[] getCityNames(Country country) {
+        return CityList.toArray(country);
+    }
+
+    public static String[] getCityNames(District district) {
+        return CityList.toArray(district);
+    }
+
+    public static String[] getCityNames(String districtName) {
+        return CityList.toArray(DistrictList.get(districtName));
+    }
+
+    /*
     public static Country getCountryByLinearSelection(int linear) {
         return CountryList.getCountryByLinearSelection(linear);
     }
@@ -59,7 +89,7 @@ public class DBInterfaceProvider {
     public static String[] getCityNameByLinearSelection(Country country, int linear) {
         return CityList.toArray(DistrictList.getDistrictByLinearSelection(country, linear));
     }
-
+    */
     public static void saveNaturalPerson(NaturalPerson naturalPerson) {
         
     }
