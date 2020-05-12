@@ -1,11 +1,9 @@
 package com.teldir.client.common;
 
-import com.sun.rowset.internal.Row;
 import com.teldir.core.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.*;
 
 public class NaturalPersonShellConstructor {
