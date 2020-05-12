@@ -104,8 +104,8 @@ public class StandaloneMain {
         debugNaturalPersonShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                Shell debugNaturalPersonListShell = NaturalPersonShellConstructor.construct(display);
-                debugNaturalPersonListShell.open();
+                Shell debugNaturalPersonShell = NaturalPersonShellConstructor.construct(display);
+                debugNaturalPersonShell.open();
             }
         });
 
