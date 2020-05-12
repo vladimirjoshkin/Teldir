@@ -16,4 +16,12 @@ public class Country {
     public String getName() {
         return name;
     }
+
+    public boolean isSame(Country country) {
+        if (id == country.getId() && name.equals(country.getName())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

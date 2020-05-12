@@ -1,9 +1,17 @@
 package com.teldir.client.common;
 
+import com.teldir.client.standalone.DBInterfaceProvider;
+import com.teldir.core.Country;
+import com.teldir.core.CountryList;
+import com.teldir.core.DistrictList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
+import java.util.Arrays;
 
 public class AddressShellConstructor {
     public static Shell construct(Display display) {
@@ -26,6 +34,7 @@ public class AddressShellConstructor {
 
         Combo comboCountry = new Combo(shell, SWT.NONE);
         comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboCountry.setItems(DBInterfaceProvider.getCountryNames());
 
         Button btnCountryNew = new Button(shell, SWT.NONE);
         btnCountryNew.setText("New Country...");
@@ -37,6 +46,19 @@ public class AddressShellConstructor {
         Combo comboDistrict = new Combo(shell, SWT.NONE);
         comboDistrict.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+        Country selectedCountry = null;
+        comboCountry.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                comboDistrict.setItems(DBInterfaceProvider.getDistrictNamesByLinearSelection(comboCountry.getSelectionIndex()));
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
+
         Button btnDistrictNew = new Button(shell, SWT.NONE);
         btnDistrictNew.setText("New Disctrict...");
 
@@ -46,6 +68,18 @@ public class AddressShellConstructor {
 
         Combo comboCity = new Combo(shell, SWT.NONE);
         comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        comboDistrict.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                comboCity.setItems();
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
 
         Button btnCityNew = new Button(shell, SWT.NONE);
         btnCityNew.setText("New City...");
@@ -81,7 +115,10 @@ public class AddressShellConstructor {
         return shell;
     }
 
-    public static String askAddress(Shell addressShell) {
-        return "Work in progress";
+    /*
+    public static String askAddress(Display display) {
+        Shell addressShell = AddressShellConstructor.construct(display);
+
     }
+    */
 }

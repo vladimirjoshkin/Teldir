@@ -22,4 +22,12 @@ public class District {
     public String getName() {
         return name;
     }
+
+    public boolean isSame(District district) {
+        if(id == district.id && country.isSame(district.getCountry()) && name.equals(district.getName())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
