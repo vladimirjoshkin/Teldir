@@ -1,5 +1,6 @@
 package com.teldir.client.common;
 
+import com.sun.corba.se.spi.ior.ObjectKey;
 import com.teldir.client.standalone.DBInterfaceProvider;
 import com.teldir.core.*;
 import org.eclipse.swt.SWT;
@@ -10,6 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class AddressWindow {
@@ -36,6 +38,7 @@ public class AddressWindow {
 
     private Address address;
     private boolean addressPrefilled = false;
+    private boolean correctlyClosed = false;
 
     private HashMap<String, Integer> countries;
     private HashMap<String, Integer> districts;
@@ -163,7 +166,18 @@ public class AddressWindow {
             @Override
             public void handleEvent(Event event) {
                 address = null;
-                shell.close();
+                if(txtIndex.getText().length() > 0 || txtStreet.getText().length() > 0 || txtBuilding.getText().length() > 0) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                    messageBox.setText("Confirmation");
+                    messageBox.setMessage("All unsaved changes will be lost. Exit anyway?");
+                    int response = messageBox.open();
+                    if (response == SWT.YES) {
+                        shell.close();
+                    }
+                } else {
+                    correctlyClosed = false;
+                    shell.close();
+                }
             }
         });
 
@@ -175,10 +189,31 @@ public class AddressWindow {
         btnSave.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                formAddress();
-                shell.close();
+                if (filledCorrectly()) {
+                    correctlyClosed = true;
+                    formAddress();
+                    shell.close();
+                } else {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                    messageBox.setText("Form filled incorrectly");
+                    messageBox.setMessage("Please form all fields with correspondents values.");
+                    messageBox.open();
+                }
+
             }
         });
+    }
+
+    private boolean filledCorrectly() {
+        if(comboCountry.getText().length() > 0 &&
+                comboDistrict.getText().length() > 0 &&
+                comboCity.getText().length() > 0 &&
+                Objects.nonNull(txtStreet.getText()) && !(txtStreet.getText().equals("")) &&
+                Objects.nonNull(txtBuilding.getText()) && !(txtBuilding.getText().equals(""))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void setItems(Combo combo, HashMap<String, Integer> hashMap) {
@@ -249,5 +284,9 @@ public class AddressWindow {
 
     public Button getBtnSave() {
         return btnSave;
+    }
+
+    public boolean closedCorectly() {
+        return correctlyClosed;
     }
 }

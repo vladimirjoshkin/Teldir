@@ -47,6 +47,7 @@ public class NaturalPersonWindow {
     public void prefill(NaturalPerson naturalPerson) {
         this.naturalPerson = naturalPerson;
         prefilled = true;
+        shell.setText(naturalPerson.getFullName());
         txtFullName.setText(naturalPerson.getFullName());
         fillNameFields(naturalPerson.getFullName());
         dtDOB.setDate(naturalPerson.getDOBYear(), naturalPerson.getDOBMonth(), naturalPerson.getDOBDay());
@@ -162,6 +163,13 @@ public class NaturalPersonWindow {
         btnCancel = new Button(shell, SWT.NONE);
         btnCancel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         btnCancel.setText("Cancel");
+
+        btnCancel.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                shell.close();
+            }
+        });
 
         btnSave = new Button(shell, SWT.NONE);
         btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));

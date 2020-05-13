@@ -130,7 +130,9 @@ public class StandaloneMain {
                 debugAddressWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
-                        System.out.println("From Standalone main: " + debugAddressWindow.getAddress().toString());
+                        if(debugAddressWindow.closedCorectly() == true) {
+                            System.out.println("From Standalone main: " + debugAddressWindow.getAddress().toString());
+                        }
                     }
                 });
             }

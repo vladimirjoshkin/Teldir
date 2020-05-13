@@ -169,11 +169,37 @@ public class DBInterfaceProvider {
         }
         return result;
     }
-
-    public static void saveNaturalPerson(NaturalPerson naturalPerson) {
-        
+    /*
+    public static NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO natural_person (post_index, city_ref, street, building) VALUES (?, ?, ?, ?)");
+            statement.setString(1, index);
+            statement.setInt(2, cityId);
+            statement.setString(3, street);
+            statement.setString(4, building);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        Address address = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM address WHERE city_ref=? AND street=? AND building=?");
+            statement.setInt(1, cityId);
+            statement.setInt(1, cityId);
+            statement.setString(2, street);
+            statement.setString(3, building);
+            ResultSet result = statement.executeQuery();
+            address = getAddress(result.getInt("id"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return address;
     }
 
+    public static NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) {
+
+    }
+    */
     public static NaturalPerson getNaturalPerson(int id) {
         NaturalPerson naturalPerson = null;
         try {
