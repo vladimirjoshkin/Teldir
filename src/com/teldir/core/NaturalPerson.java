@@ -28,12 +28,33 @@ public class NaturalPerson {
         this.phoneNumbers = phoneNumbers;
     }
 
+    public NaturalPerson(int id, String firstName, String familyName, String patronymic, String dateOfBirth, Address livingAddress) {
+        this.id = id;
+        this.firstName = firstName;
+        this.familyName = familyName;
+        this.patronymic = patronymic;
+        this.dateOfBirth = dateOfBirth;
+        this.livingAddress = livingAddress;
+    }
+
     public String getFullName() {
         return (this.firstName + " " + this.familyName + " " + this.patronymic).replace("  ", " ");
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
+    }
+
     public String[] toStringArray() {
-        return new String[]{firstName + " " + familyName + " " + patronymic,
+        return new String[]{firstName + " " + familyName + " " + patronymic + " " + "ID=" + getId() + " ",
                 dateOfBirth,
                 livingAddress.toString(),
                 getPhoneNumbersAsString()

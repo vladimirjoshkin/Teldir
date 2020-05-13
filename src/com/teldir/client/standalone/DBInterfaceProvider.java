@@ -3,6 +3,7 @@ package com.teldir.client.standalone;
 import com.teldir.core.*;
 import sun.swing.MenuItemLayoutHelper;
 
+import javax.print.attribute.standard.MediaSize;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,33 +170,52 @@ public class DBInterfaceProvider {
         }
         return result;
     }
-    /*
-    public static NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) {
+
+    public static Owner saveOwner(NaturalPerson naturalPerson) {
+        Owner owner = null;
         try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO natural_person (post_index, city_ref, street, building) VALUES (?, ?, ?, ?)");
-            statement.setString(1, index);
-            statement.setInt(2, cityId);
-            statement.setString(3, street);
-            statement.setString(4, building);
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO ownership (natural_person_ref) VALUES (?)");
+            statement.setInt(1, naturalPerson.getId());
+            System.out.println("saveOwner npId=" + naturalPerson.getId());
+            statement.executeUpdate();
+            owner = getOwner(naturalPerson);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static NaturalPerson saveNaturalPerson(String firstName, String familyName, String patronymic, String dateOfBirdth, Address address) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO natural_person (first_name, family_name, patronymic, date_of_birth, address_ref) VALUES (?, ?, ?, ?, ?)");
+            statement.setString(1, firstName);
+            statement.setString(2, familyName);
+            statement.setString(3, patronymic);
+            statement.setString(4, dateOfBirdth);
+            statement.setInt(5, address.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        Address address = null;
+        NaturalPerson naturalPerson = null;
         try {
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM address WHERE city_ref=? AND street=? AND building=?");
-            statement.setInt(1, cityId);
-            statement.setInt(1, cityId);
-            statement.setString(2, street);
-            statement.setString(3, building);
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person WHERE first_name=? AND family_name=? AND patronymic=? AND date_of_birth=? AND address_ref=?");
+            statement.setString(1, firstName);
+            statement.setString(2, familyName);
+            statement.setString(3, patronymic);
+            statement.setString(4, dateOfBirdth);
+            statement.setInt(5, address.getId());
             ResultSet result = statement.executeQuery();
-            address = getAddress(result.getInt("id"));
+            int naturalPersonId = result.getInt("id");
+            naturalPerson = getNaturalPersonWithoutOwner(naturalPersonId);
+            saveOwner(naturalPerson);
+            naturalPerson = getNaturalPerson(naturalPersonId);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return address;
+        return naturalPerson;
     }
-
+    /*
     public static NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) {
 
     }
@@ -206,7 +226,11 @@ public class DBInterfaceProvider {
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person WHERE id=?");
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
-            Owner owner = getOwnerByNaturalPersonId(result.getInt("id"));
+            int naturalPersonId = result.getInt("id");
+            Owner owner = getOwnerByNaturalPersonId(naturalPersonId);
+            if(Objects.isNull(owner)) {
+                System.out.println("owner is null at " + getNaturalPersonWithoutOwner(naturalPersonId).getFullName() + " ID=" + naturalPersonId);
+            }
             naturalPerson = new NaturalPerson(result.getInt("id"),
                     result.getString("first_name"),
                     result.getString("family_name"),
@@ -215,6 +239,39 @@ public class DBInterfaceProvider {
                     getAddress(result.getInt("address_ref")),
                     owner,
                     getPhoneNumbers(owner));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return naturalPerson;
+    }
+
+    public static NaturalPerson updateNaturalPerson(int id, String firstName, String familyName, String patronymic, String dateOfBirth) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("UPDATE natural_person SET first_name=?, family_name=?, patronymic=?, date_of_birth=? WHERE id=?");
+            statement.setString(1, firstName);
+            statement.setString(2, familyName);
+            statement.setString(3, patronymic);
+            statement.setString(4, dateOfBirth);
+            statement.setInt(5, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return getNaturalPerson(id);
+    }
+
+    public static NaturalPerson getNaturalPersonWithoutOwner(int id) {
+        NaturalPerson naturalPerson = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            naturalPerson = new NaturalPerson(result.getInt("id"),
+                    result.getString("first_name"),
+                    result.getString("family_name"),
+                    result.getString("patronymic"),
+                    result.getString("date_of_birth"),
+                    getAddress(result.getInt("address_ref")));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import com.teldir.client.common.*;
 
+import java.util.List;
 import java.util.Objects;
 
 public class StandaloneMain {
@@ -18,12 +19,12 @@ public class StandaloneMain {
     private static Shell shell = new Shell(display);
 
     public static void main(String[] args) {
-        System.out.println(PROGRAM_NAME + " v" + VERSION_MAJOR + "." + VERSION_MINOR + " ("+ PROGRAM_MODE + ") " + "runned.");
+        System.out.println(PROGRAM_NAME + " v" + VERSION_MAJOR + "." + VERSION_MINOR + " (" + PROGRAM_MODE + ") " + "runned.");
         //DBInterfaceProvider.initializeData();
         DBInterfaceProvider.connect();
         System.out.println(DBInterfaceProvider.getCountries());
         System.out.println(DBInterfaceProvider.getCountry(643).toString());
-        System.out.println("Districts in " + DBInterfaceProvider.getCountry(643) +": " + DBInterfaceProvider.getDistricts(643));
+        System.out.println("Districts in " + DBInterfaceProvider.getCountry(643) + ": " + DBInterfaceProvider.getDistricts(643));
         System.out.println("INRTU: " + DBInterfaceProvider.getAddress(1).toString());
         System.out.println("GUI Main.");
 
@@ -82,8 +83,24 @@ public class StandaloneMain {
         MenuItem createNewNaturalPersonItem = new MenuItem(naturalPersonSubmenu, SWT.PUSH);
         createNewNaturalPersonItem.setText("Create new Natural Person...");
 
+        createNewNaturalPersonItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                NaturalPersonWindow naturalPersonWindow = new NaturalPersonWindow(display);
+                naturalPersonWindow.open();
+            }
+        });
+
         MenuItem showNaturalPersonListItem = new MenuItem(naturalPersonSubmenu, SWT.PUSH);
         showNaturalPersonListItem.setText("Show Natural Person List...");
+
+        showNaturalPersonListItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                ListWindow listWindow = new ListWindow(display, ListWindow.NATURAL_PERSON);
+                listWindow.open();
+            }
+        });
 
         /* Legal Entity menu */
         MenuItem legalEntityItem = new MenuItem(bar, SWT.CASCADE);
@@ -130,7 +147,7 @@ public class StandaloneMain {
                 debugAddressWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
-                        if(debugAddressWindow.closedCorectly() == true) {
+                        if (debugAddressWindow.closedCorectly() == true) {
                             System.out.println("From Standalone main: " + debugAddressWindow.getAddress().toString());
                         }
                     }

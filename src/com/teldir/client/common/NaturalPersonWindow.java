@@ -1,5 +1,6 @@
 package com.teldir.client.common;
 
+import com.teldir.client.standalone.DBInterfaceProvider;
 import com.teldir.core.Address;
 import com.teldir.core.NaturalPerson;
 import com.teldir.core.StringUtils;
@@ -44,6 +45,10 @@ public class NaturalPersonWindow {
         shell.open();
     }
 
+    public Button getBtnSave() {
+        return btnSave;
+    }
+
     public void prefill(NaturalPerson naturalPerson) {
         this.naturalPerson = naturalPerson;
         prefilled = true;
@@ -56,6 +61,20 @@ public class NaturalPersonWindow {
         list.setItems(naturalPerson.getPhoneNumbersAsStringArray());
     }
 
+    public boolean changed() {
+        if(prefilled) {
+            if (!txtFirstName.getText().equals(naturalPerson.getFirstName()) ||
+            !txtLastName.getText().equals(naturalPerson.getFamilyName()) ||
+            !txtPatronymic.getText().equals(naturalPerson.getPatronymic())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     private void fillNameFields(String fullName) {
         String[] names = StringUtils.deleteDoubleSpaces(fullName).split(" ");
         try {
@@ -64,6 +83,14 @@ public class NaturalPersonWindow {
             txtPatronymic.setText(names[2]);
         } catch (IndexOutOfBoundsException ex) {
             // ignore
+        }
+    }
+
+    private boolean filledCorrectly() {
+        if (txtFirstName.getText().length() > 0 && txtLastName.getText().length() > 0 && txtAddress.getText().length() > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -126,8 +153,10 @@ public class NaturalPersonWindow {
                 addressWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
-                        address = addressWindow.getAddress();
-                        txtAddress.setText(address.toString());
+                        if (addressWindow.closedCorectly()) {
+                            address = addressWindow.getAddress();
+                            txtAddress.setText(address.toString());
+                        }
                     }
                 });
             }
@@ -167,12 +196,47 @@ public class NaturalPersonWindow {
         btnCancel.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                shell.close();
+                if(txtFullName.getText().length() > 0) {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                    messageBox.setText("Confirmation");
+                    messageBox.setMessage("All unsaved changes will be lost. Exit anyway?");
+                    int response = messageBox.open();
+                    if (response == SWT.YES) {
+                        shell.close();
+                    }
+                }
             }
         });
 
         btnSave = new Button(shell, SWT.NONE);
         btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         btnSave.setText("Save");
+
+        btnSave.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (filledCorrectly()) {
+                    String patronymic = "";
+                    if (txtPatronymic.getText().length() > 0) {
+                        patronymic = txtPatronymic.getText();
+                    }
+                    String dob = String.valueOf(dtDOB.getYear()) + "." + String.valueOf(dtDOB.getMonth()) + "." + String.valueOf(dtDOB.getDay());
+                    if(prefilled) {
+                        if (changed()) {
+                            System.out.println("NaturalPersonWindow data prefilled changed");
+                            DBInterfaceProvider.updateNaturalPerson(naturalPerson.getId(), txtFirstName.getText(), txtLastName.getText(), patronymic, dob);
+                        }
+                    } else {
+                        DBInterfaceProvider.saveNaturalPerson(txtFirstName.getText(), txtLastName.getText(), patronymic, dob, DBInterfaceProvider.getAddress(address.getId()));
+                    }
+                    shell.close();
+                } else {
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                    messageBox.setText("Form filled incorrectly");
+                    messageBox.setMessage("Please form all fields with correspondents values.\nNatural Person has to have First name and Family name.");
+                    messageBox.open();
+                }
+            }
+        });
     }
 }

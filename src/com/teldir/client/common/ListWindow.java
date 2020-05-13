@@ -1,6 +1,7 @@
 package com.teldir.client.common;
 
 import com.teldir.client.standalone.DBInterfaceProvider;
+import com.teldir.core.NaturalPerson;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -8,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
 
 public class ListWindow {
 
@@ -43,6 +45,7 @@ public class ListWindow {
 
     public void prefill(int type) {
         if (type == ListWindow.NATURAL_PERSON) {
+            table.removeAll();
             ResultSet resultSet = DBInterfaceProvider.getNaturalPersons();
             try {
                 while (resultSet.next()) {
@@ -108,6 +111,21 @@ public class ListWindow {
             tcPhoneNumbers.setText("Phone numbers");
             tcPhoneNumbers.setWidth(100);
             prefill(ListWindow.NATURAL_PERSON);
+
+            btnAdd.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    NaturalPersonWindow naturalPersonWindow = new NaturalPersonWindow(display);
+                    naturalPersonWindow.open();
+
+                    naturalPersonWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                        @Override
+                        public void handleEvent(Event event) {
+                            prefill(ListWindow.NATURAL_PERSON);
+                        }
+                    });
+                }
+            });
         }
 
     }
