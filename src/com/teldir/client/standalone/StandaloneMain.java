@@ -106,11 +106,16 @@ public class StandaloneMain {
         debugItem.setMenu(debugSubmenu);
 
         MenuItem debugNaturalPersonShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
-        debugNaturalPersonShellItem.setText("Show Natural Person Shell...");
+        debugNaturalPersonShellItem.setText("Show Natural Person Shell... (" + DBInterfaceProvider.getNaturalPerson(1).getFullName() + ")");
         debugNaturalPersonShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
+                /*
                 NaturalPersonWindow debugNaturalPersonWindow = new NaturalPersonWindow(display);
+                debugNaturalPersonWindow.open();
+                */
+                NaturalPersonWindow debugNaturalPersonWindow = new NaturalPersonWindow(display);
+                debugNaturalPersonWindow.prefill(DBInterfaceProvider.getNaturalPerson(1));
                 debugNaturalPersonWindow.open();
             }
         });

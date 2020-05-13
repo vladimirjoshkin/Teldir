@@ -1,6 +1,7 @@
 package com.teldir.client.common;
 
 import com.teldir.core.Address;
+import com.teldir.core.NaturalPerson;
 import com.teldir.core.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -32,6 +33,8 @@ public class NaturalPersonWindow {
     private Button btnSave;
 
     private Address address;
+    private NaturalPerson naturalPerson;
+    private boolean prefilled = false;
 
     public NaturalPersonWindow(Display display) {
         construct(display);
@@ -39,6 +42,28 @@ public class NaturalPersonWindow {
 
     public void open() {
         shell.open();
+    }
+
+    public void prefill(NaturalPerson naturalPerson) {
+        this.naturalPerson = naturalPerson;
+        prefilled = true;
+        txtFullName.setText(naturalPerson.getFullName());
+        fillNameFields(naturalPerson.getFullName());
+        dtDOB.setDate(naturalPerson.getDOBYear(), naturalPerson.getDOBMonth(), naturalPerson.getDOBDay());
+        address = naturalPerson.getLivingAddress();
+        txtAddress.setText(address.toString());
+        list.setItems(naturalPerson.getPhoneNumbersAsStringArray());
+    }
+
+    private void fillNameFields(String fullName) {
+        String[] names = StringUtils.deleteDoubleSpaces(fullName).split(" ");
+        try {
+            txtFirstName.setText(names[0]);
+            txtLastName.setText(names[1]);
+            txtPatronymic.setText(names[2]);
+        } catch (IndexOutOfBoundsException ex) {
+            // ignore
+        }
     }
 
     public void construct(Display display) {
@@ -67,14 +92,7 @@ public class NaturalPersonWindow {
         txtFullName.addListener(SWT.FocusOut, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                String[] fullName = StringUtils.deleteDoubleSpaces(txtFullName.getText()).split(" ");
-                try {
-                    txtFirstName.setText(fullName[0]);
-                    txtLastName.setText(fullName[1]);
-                    txtPatronymic.setText(fullName[2]);
-                } catch (IndexOutOfBoundsException ex) {
-                    // ignore
-                }
+                fillNameFields(txtFullName.getText());
             }
         });
 

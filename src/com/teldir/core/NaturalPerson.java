@@ -2,6 +2,7 @@ package com.teldir.core;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class NaturalPerson {
     private int id;
@@ -32,7 +33,7 @@ public class NaturalPerson {
     }
 
     public String[] toStringArray() {
-        return new String[] { firstName + " " + familyName + " " + patronymic,
+        return new String[]{firstName + " " + familyName + " " + patronymic,
                 dateOfBirth,
                 livingAddress.toString(),
                 getPhoneNumbersAsString()
@@ -57,13 +58,29 @@ public class NaturalPerson {
 
     public String getPhoneNumbersAsString() {
         StringBuilder outString = new StringBuilder();
-        for(int i = 0; i < phoneNumbers.size(); i++) {
+        for (int i = 0; i < phoneNumbers.size(); i++) {
             outString.append(phoneNumbers.get(i).getNumber()).append(" ");
         }
         return outString.toString();
     }
 
-    public void setPhoneNumbers(ArrayList<PhoneNumber> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
+    public String[] getPhoneNumbersAsStringArray() {
+        String[] outArr = new String[phoneNumbers.size()];
+        for (int i = 0; i < phoneNumbers.size(); i++) {
+            outArr[i] = phoneNumbers.get(i).getNumber();
+        }
+        return outArr;
+    }
+
+    public int getDOBYear() {
+        return Integer.parseInt((dateOfBirth.split(Pattern.quote(".")))[0]);
+    }
+
+    public int getDOBMonth() {
+        return Integer.parseInt(dateOfBirth.split(Pattern.quote("."))[1]);
+    }
+
+    public int getDOBDay() {
+        return Integer.parseInt(dateOfBirth.split(Pattern.quote("."))[2]);
     }
 }
