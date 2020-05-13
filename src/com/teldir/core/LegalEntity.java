@@ -1,38 +1,29 @@
 package com.teldir.core;
 
+import java.util.ArrayList;
+
 public class LegalEntity {
     private int id;
     private String fullName;
-    private String address;
+    private Address address;
+    private ArrayList<PhoneNumber> phoneNumbers;
 
-    public LegalEntity(int id) {
-        this.id = id;
-    }
-
-    public LegalEntity(int id, String fullName) {
-        this.id = id;
-        this.fullName = fullName;
-    }
-
-    public LegalEntity(int id, String fullName, String address) {
+    public LegalEntity(int id, String fullName, Address address, ArrayList<PhoneNumber> phoneNumbers) {
         this.id = id;
         this.fullName = fullName;
         this.address = address;
+        this.phoneNumbers = phoneNumbers;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getAddress() {
+    public Address getAddress() {
         return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 }

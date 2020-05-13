@@ -141,15 +141,42 @@ public class StandaloneMain {
             }
         });
 
+        /*
         MenuItem debugListShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
         debugListShellItem.setText("Show List Shell...");
         debugListShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                Shell debugListShell = ListShellConstructor.construct(display);
-                debugListShell.open();
+                ListWindow listWindow = new ListWindow(display);
+                listWindow.open();
             }
         });
+        */
+
+        MenuItem debugListItem = new MenuItem(debugSubmenu, SWT.CASCADE);
+        debugListItem.setText("List");
+
+        Menu debugListSubmenu = new Menu(shell, SWT.DROP_DOWN);
+        debugListItem.setMenu(debugListSubmenu);
+
+        MenuItem debugListNaturalPersonItem = new MenuItem(debugListSubmenu, SWT.PUSH);
+        debugListNaturalPersonItem.setText("Natural Person List...");
+        debugListNaturalPersonItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                ListWindow listWindow = new ListWindow(display, ListWindow.NATURAL_PERSON);
+                listWindow.open();
+            }
+        });
+
+        MenuItem debugLegalEntityListItem = new MenuItem(debugListSubmenu, SWT.PUSH);
+        debugLegalEntityListItem.setText("Legal Entity List...");
+
+        MenuItem debugPhoneNumberListItem = new MenuItem(debugListSubmenu, SWT.PUSH);
+        debugPhoneNumberListItem.setText("Phone Number List...");
+
+        MenuItem debugHeadingListItem = new MenuItem(debugListSubmenu, SWT.PUSH);
+        debugHeadingListItem.setText("Heading List...");
 
         MenuItem debugPhoneNumberShellItem = new MenuItem(debugSubmenu, SWT.PUSH);
         debugPhoneNumberShellItem.setText("Show Phone Number Shell...");

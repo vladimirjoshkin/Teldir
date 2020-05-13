@@ -1,9 +1,12 @@
 package com.teldir.client.standalone;
 
 import com.teldir.core.*;
+import sun.swing.MenuItemLayoutHelper;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class DBInterfaceProvider {
 
@@ -156,19 +159,132 @@ public class DBInterfaceProvider {
         return address;
     }
 
+    public static ResultSet getNaturalPersons() {
+        ResultSet result = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person");
+            result = statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
     public static void saveNaturalPerson(NaturalPerson naturalPerson) {
         
     }
 
     public static NaturalPerson getNaturalPerson(int id) {
-        return new NaturalPerson(-1);
+        NaturalPerson naturalPerson = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            Owner owner = getOwnerByNaturalPersonId(result.getInt("id"));
+            naturalPerson = new NaturalPerson(result.getInt("id"),
+                    result.getString("first_name"),
+                    result.getString("family_name"),
+                    result.getString("patronymic"),
+                    result.getString("date_of_birth"),
+                    getAddress(result.getInt("address_ref")),
+                    owner,
+                    getPhoneNumbers(owner));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return naturalPerson;
+    }
+
+    public static Heading getHeading(int id) {
+        Heading heading = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM heading WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            heading = new Heading(result.getInt("id"), result.getString("name"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return heading;
+    }
+
+    public static Owner getOwner(int id) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM ownership WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            if(Objects.nonNull(result.getInt("natural_person_ref"))) {
+                owner = new Owner(result.getInt("id"), Owner.NATURAL_PERSON, result.getInt("natural_person_ref"));
+            } else {
+                owner = new Owner(result.getInt("id"), Owner.LEGAL_ENTITY, result.getInt("legal_entity_id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static Owner getOwnerByNaturalPersonId(int naturalPersonId) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM ownership WHERE natural_person_ref=?");
+            statement.setInt(1, naturalPersonId);
+            ResultSet result = statement.executeQuery();
+            owner = new Owner(result.getInt("id"), Owner.NATURAL_PERSON, result.getInt("natural_person_ref"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static Owner getOwner(NaturalPerson naturalPerson) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM ownership WHERE natural_person_ref=?");
+            statement.setInt(1, naturalPerson.getId());
+            ResultSet result = statement.executeQuery();
+            owner = new Owner(result.getInt("id"), Owner.NATURAL_PERSON, result.getInt("natural_person_ref"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static Owner getOwner(LegalEntity legalEntity) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM ownership WHERE legal_entity_ref=?");
+            statement.setInt(1, legalEntity.getId());
+            ResultSet result = statement.executeQuery();
+            owner = new Owner(result.getInt("id"), Owner.LEGAL_ENTITY, result.getInt("legal_entity_ref"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static ArrayList<PhoneNumber> getPhoneNumbers(Owner owner) {
+        ArrayList<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM phone_number WHERE ownership_ref=?");
+            statement.setInt(1, owner.getId());
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                phoneNumbers.add(new PhoneNumber(getHeading(result.getInt("heading_ref")), owner, result.getString("number")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return phoneNumbers;
     }
 
     public static void saveLegalEntity(LegalEntity legalEntity) {
 
     }
-
+    /*
     public static LegalEntity getLegalEntity(int id) {
         return new LegalEntity(-1);
     }
+    */
 }
