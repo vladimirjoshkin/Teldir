@@ -11,6 +11,7 @@ public class Owner {
     public Owner(int id, int ownership, int ownerId) {
         this.id = id;
         this.ownership = ownership;
+        this.ownerId = ownerId;
     }
 
     public int getId() {
