@@ -118,10 +118,6 @@ public class StandaloneMain {
         debugAddressShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                /*
-                Shell debugAddressShell = AddressShellConstructor.construct(display);
-                debugAddressShell.open();
-                */
                 AddressWindow debugAddressWindow = new AddressWindow(display);
                 debugAddressWindow.open();
                 debugAddressWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
