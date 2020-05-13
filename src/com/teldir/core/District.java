@@ -5,6 +5,10 @@ public class District {
     private Country country;
     private String name;
 
+    public District(int id) {
+        this.id = id;
+    }
+
     public District(int id, Country country, String name) {
         this.id = id;
         this.country = country;
@@ -24,7 +28,7 @@ public class District {
     }
 
     public boolean isSame(District district) {
-        if(id == district.id && country.isSame(district.getCountry()) && name.equals(district.getName())) {
+        if(id == district.id) {
             return true;
         } else {
             return false;

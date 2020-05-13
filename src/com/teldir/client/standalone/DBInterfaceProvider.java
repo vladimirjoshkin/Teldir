@@ -2,94 +2,151 @@ package com.teldir.client.standalone;
 
 import com.teldir.core.*;
 
+import java.sql.*;
+import java.util.HashMap;
+
 public class DBInterfaceProvider {
 
-    public static void initializeData() {
-        initializeCountryList();
-        initializeDistrictList();
-        initializeCityList();
+    private static Connection conn = null;
+    public static void connect() {
+        String url = "jdbc:sqlite:databases/default.db";
+        try {
+            conn = DriverManager.getConnection(url);
+            System.out.println("SQLite connection successful.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    private static void initializeCountryList() {
-        CountryList.add(643, "Russia");
-        CountryList.add(417, "Kyrgyzstan");
-        CountryList.add(428, "Latvia");
-        CountryList.add(398, "Kazakhstan");
-        CountryList.add(112, "Belarus");
-        CountryList.add(840, "United States");
-        CountryList.add(826, "United Kingdom");
+    public static HashMap<String, Integer> getCountries() {
+        HashMap<String, Integer> countries = new HashMap<String, Integer>();
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery("SELECT * FROM country");
+            while(result.next()) {
+                countries.put(result.getString("name"), result.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return countries;
     }
 
-    private static void initializeDistrictList() {
-        DistrictList.add(64301, CountryList.get(643), "Irkutsk district");
-        DistrictList.add(64302, CountryList.get(643), "Moscow");
-        DistrictList.add(64303, CountryList.get(643), "St. Peterburg");
-
-        DistrictList.add(41701, CountryList.get(417), "Bishkek");
-
-        DistrictList.add(42801, CountryList.get(428), "Ilukstes novads");
-        DistrictList.add(42802, CountryList.get(428), "Daugavpils novads");
-        DistrictList.add(42803, CountryList.get(428), "Riga");
+    public static Country getCountry(int id) {
+        Country country = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM country WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            country = new Country(result.getInt("id"), result.getString("name"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return country;
     }
 
-    private static void initializeCityList() {
-        CityList.add(643011, DistrictList.get(64301), "Irkutsk city");
-        CityList.add(643012, DistrictList.get(64301), "Angarsk");
-        CityList.add(643021, DistrictList.get(64302), "Moscow city");
-        CityList.add(643031, DistrictList.get(64303), "St. Peterburg");
-
-        CityList.add(417011, DistrictList.get(41701), "Bishek city");
-
-        CityList.add(428011, DistrictList.get(42801), "Ilukste");
-        CityList.add(428021, DistrictList.get(42802), "Daugavpils");
-        CityList.add(428031, DistrictList.get(42803), "Riga");
+    public static HashMap<String, Integer> getDistricts(int countryId) {
+        HashMap<String, Integer> districts = new HashMap<String, Integer>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM district WHERE country_ref=?");
+            statement.setInt(1, countryId);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                districts.put(result.getString("name"), result.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return districts;
     }
 
-    public static String[] getCountryNames() {
-        return CountryList.toArray();
+    public static District getDistrict(int id) {
+        District district = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM district WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            district = new District(result.getInt("id"), getCountry(result.getInt("country_ref")), result.getString("name"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return district;
     }
 
-    public static String[] getDistrictNames() {
-        return DistrictList.toArray();
+
+    public static HashMap<String, Integer> getCities(int districtId) {
+        HashMap<String, Integer> cities = new HashMap<String, Integer>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE district_ref=?");
+            statement.setInt(1, districtId);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                cities.put(result.getString("name"), result.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return cities;
     }
 
-    public static String[] getDistrictNames(Country country) {
-        return DistrictList.toArray(country);
+    public static City getCity(int id) {
+        City city = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            city = new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return city;
     }
 
-    public static String[] getDistrictNames(String countryName) {
-        return DistrictList.toArray(CountryList.get(countryName));
+    public static Address saveAddress(String index, int cityId, String street, String building) {
+        try {
+            /* TODO: statement cause SQL syntax error. */
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO address (index, city_ref, street, building) VALUES (?, ?, ?, ?)");
+            System.out.println(statement);
+            statement.setString(1, index);
+            System.out.println(statement);
+            statement.setInt(2, cityId);
+            System.out.println(statement);
+            statement.setString(3, street);
+            System.out.println(statement);
+            statement.setString(4, building);
+            System.out.println(statement);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("saveAddress " + e.getMessage());
+        }
+        Address address = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM address WHERE city_ref=? AND street=? AND building=?");
+            statement.setInt(1, cityId);
+            statement.setInt(1, cityId);
+            statement.setString(2, street);
+            statement.setString(3, building);
+            ResultSet result = statement.executeQuery();
+            address = getAddress(result.getInt("id"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return address;
     }
 
-    public static String[] getCityNames() {
-        return CityList.toArray();
+    public static Address getAddress(int id) {
+        Address address = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM address WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            address = new Address(result.getInt("id"), result.getString("index"), getCity(result.getInt("city_ref")), result.getString("street"), result.getString("building"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return address;
     }
 
-    public static String[] getCityNames(Country country) {
-        return CityList.toArray(country);
-    }
-
-    public static String[] getCityNames(District district) {
-        return CityList.toArray(district);
-    }
-
-    public static String[] getCityNames(String districtName) {
-        return CityList.toArray(DistrictList.get(districtName));
-    }
-
-    /*
-    public static Country getCountryByLinearSelection(int linear) {
-        return CountryList.getCountryByLinearSelection(linear);
-    }
-
-    public static String[] getDistrictNamesByLinearSelection(int linear) {
-        return DistrictList.toArray(CountryList.getCountryByLinearSelection(linear));
-    }
-
-    public static String[] getCityNameByLinearSelection(Country country, int linear) {
-        return CityList.toArray(DistrictList.getDistrictByLinearSelection(country, linear));
-    }
-    */
     public static void saveNaturalPerson(NaturalPerson naturalPerson) {
         
     }

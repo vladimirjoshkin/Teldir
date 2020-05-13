@@ -1,5 +1,6 @@
 package com.teldir.client.standalone;
 
+import com.teldir.core.Address;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import com.teldir.client.common.*;
@@ -16,7 +17,12 @@ public class StandaloneMain {
 
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + VERSION_MAJOR + "." + VERSION_MINOR + " ("+ PROGRAM_MODE + ") " + "runned.");
-        DBInterfaceProvider.initializeData();
+        //DBInterfaceProvider.initializeData();
+        DBInterfaceProvider.connect();
+        System.out.println(DBInterfaceProvider.getCountries());
+        System.out.println(DBInterfaceProvider.getCountry(643).toString());
+        System.out.println("Districts in " + DBInterfaceProvider.getCountry(643) +": " + DBInterfaceProvider.getDistricts(643));
+        System.out.println("INRTU: " + DBInterfaceProvider.getAddress(1).toString());
         System.out.println("GUI Main.");
 
         shell.setText(PROGRAM_NAME);
@@ -112,8 +118,18 @@ public class StandaloneMain {
         debugAddressShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
+                /*
                 Shell debugAddressShell = AddressShellConstructor.construct(display);
                 debugAddressShell.open();
+                */
+                AddressWindow debugAddressWindow = new AddressWindow(display);
+                debugAddressWindow.open();
+                debugAddressWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        System.out.println("From Standalone main: " + debugAddressWindow.getAddress().toString());
+                    }
+                });
             }
         });
 

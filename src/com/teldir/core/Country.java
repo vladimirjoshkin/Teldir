@@ -4,6 +4,10 @@ public class Country {
     private int id;
     private String name;
 
+    public Country(int id) {
+        this.id = id;
+    }
+
     public Country(int id, String name) {
         this.id = id;
         this.name = name;
@@ -17,8 +21,12 @@ public class Country {
         return name;
     }
 
+    public String toString() {
+        return "{ id=" + id + " name=" + name +" }";
+    }
+
     public boolean isSame(Country country) {
-        if (id == country.getId() && name.equals(country.getName())) {
+        if (id == country.getId()) {
             return true;
         } else {
             return false;

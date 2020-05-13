@@ -1,7 +1,5 @@
 package com.teldir.core;
 
-import java.util.ArrayList;
-
 public class Address {
     private int id;
     private String index;
