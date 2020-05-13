@@ -128,6 +128,21 @@ public class DBInterfaceProvider {
         return address;
     }
 
+    public static Address updateAddress(int id, String index, int cityId, String street, String building) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("UPDATE address SET post_index=?, city_ref=?, street=?, building=? WHERE id=?");
+            statement.setString(1, index);
+            statement.setInt(2, cityId);
+            statement.setString(3, street);
+            statement.setString(4, building);
+            statement.setInt(5, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return getAddress(id);
+    }
+
     public static Address getAddress(int id) {
         Address address = null;
         try {

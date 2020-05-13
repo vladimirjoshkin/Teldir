@@ -35,6 +35,7 @@ public class AddressWindow {
     private Button  btnSave;
 
     private Address address;
+    private boolean addressPrefilled = false;
 
     private HashMap<String, Integer> countries;
     private HashMap<String, Integer> districts;
@@ -42,6 +43,24 @@ public class AddressWindow {
 
     public AddressWindow(Display display) {
         construct(display);
+    }
+
+    public AddressWindow(Display display, Address prefilledAddress) {
+        construct(display);
+        prefillAddress(prefilledAddress);
+    }
+
+    public void prefillAddress(Address prefilledAddress) {
+        addressPrefilled = true;
+        address = prefilledAddress;
+        txtIndex.setText(prefilledAddress.getIndex());
+        comboCountry.select(getIndex(prefilledAddress.getCity().getDistrict().getCountry().getId(), countries));
+        updateDistricts();
+        comboDistrict.select(getIndex(prefilledAddress.getCity().getDistrict().getId(), districts));
+        updateCities();
+        comboCity.select(getIndex(prefilledAddress.getCity().getId(), cities));
+        txtStreet.setText(prefilledAddress.getStreet());
+        txtBuilding.setText(prefilledAddress.getBuilding());
     }
 
     public void open() {
@@ -172,6 +191,15 @@ public class AddressWindow {
         return hashMap.get(combo.getText());
     }
 
+    private int getIndex(int id, HashMap<String, Integer> hashMap) {
+        for(int i = 0; i < hashMap.size(); i++) {
+            if(Integer.parseInt(hashMap.values().toArray()[i].toString()) == id) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     private int getSelectedCountryId() {
         return getId(comboCountry, countries);
     }
@@ -207,7 +235,11 @@ public class AddressWindow {
 
     private Address formAddress() {
         System.out.println(txtIndex.getText() + " " + getSelectedCityId() + " " + txtStreet.getText() + " " + txtBuilding.getText());
-        address = DBInterfaceProvider.saveAddress(txtIndex.getText(), getSelectedCityId(), txtStreet.getText(), txtBuilding.getText());
+        if(addressPrefilled) {
+            address = DBInterfaceProvider.updateAddress(address.getId(), txtIndex.getText(), getSelectedCityId(), txtStreet.getText(), txtBuilding.getText());
+        } else {
+            address = DBInterfaceProvider.saveAddress(txtIndex.getText(), getSelectedCityId(), txtStreet.getText(), txtBuilding.getText());
+        }
         return address;
     }
 

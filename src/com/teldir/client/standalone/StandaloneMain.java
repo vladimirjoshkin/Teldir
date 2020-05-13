@@ -5,6 +5,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import com.teldir.client.common.*;
 
+import java.util.Objects;
+
 public class StandaloneMain {
 
     public static final String PROGRAM_NAME = "Teldir";
@@ -108,8 +110,8 @@ public class StandaloneMain {
         debugNaturalPersonShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                Shell debugNaturalPersonShell = NaturalPersonShellConstructor.construct(display);
-                debugNaturalPersonShell.open();
+                NaturalPersonWindow debugNaturalPersonWindow = new NaturalPersonWindow(display);
+                debugNaturalPersonWindow.open();
             }
         });
 
