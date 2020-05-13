@@ -104,20 +104,14 @@ public class DBInterfaceProvider {
 
     public static Address saveAddress(String index, int cityId, String street, String building) {
         try {
-            /* TODO: statement cause SQL syntax error. */
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO address (index, city_ref, street, building) VALUES (?, ?, ?, ?)");
-            System.out.println(statement);
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO address (post_index, city_ref, street, building) VALUES (?, ?, ?, ?)");
             statement.setString(1, index);
-            System.out.println(statement);
             statement.setInt(2, cityId);
-            System.out.println(statement);
             statement.setString(3, street);
-            System.out.println(statement);
             statement.setString(4, building);
-            System.out.println(statement);
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("saveAddress " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         Address address = null;
         try {
@@ -140,7 +134,7 @@ public class DBInterfaceProvider {
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM address WHERE id=?");
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
-            address = new Address(result.getInt("id"), result.getString("index"), getCity(result.getInt("city_ref")), result.getString("street"), result.getString("building"));
+            address = new Address(result.getInt("id"), result.getString("post_index"), getCity(result.getInt("city_ref")), result.getString("street"), result.getString("building"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
