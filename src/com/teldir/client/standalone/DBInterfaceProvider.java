@@ -36,13 +36,40 @@ public class DBInterfaceProvider {
         return countries;
     }
 
+    public static ArrayList<Country> getCountriesArrayList() {
+        ArrayList<Country> countries = new ArrayList<Country>();
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery("SELECT * FROM country");
+            while(result.next()) {
+                countries.add(new Country(result.getInt("id"), result.getString("name"), result.getInt("code")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return countries;
+    }
+
     public static Country getCountry(int id) {
         Country country = null;
         try {
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM country WHERE id=?");
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
-            country = new Country(result.getInt("id"), result.getString("name"));
+            country = new Country(result.getInt("id"), result.getString("name"), result.getInt("country_code"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return country;
+    }
+
+    public static Country getCountryByCode(int code) {
+        Country country = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM country WHERE country_code=?");
+            statement.setInt(1, code);
+            ResultSet result = statement.executeQuery();
+            country = new Country(result.getInt("id"), result.getString("name"), result.getInt("country_code"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -93,13 +120,47 @@ public class DBInterfaceProvider {
         return cities;
     }
 
+    public static HashMap<String, Integer> getCountryCities(int countryId) {
+        HashMap<String, Integer> districts = getDistricts(countryId);
+        HashMap<String, Integer> cities = new HashMap<String, Integer>();
+        for (int districtId : districts.values()) {
+            try {
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE district_ref=?");
+                statement.setInt(1, districtId);
+                ResultSet result = statement.executeQuery();
+                while(result.next()) {
+                    cities.put(result.getString("name"), result.getInt("id"));
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return cities;
+    }
+
+    public static ArrayList<City> getCountryCitiesArrayList(int countryId) {
+        HashMap<String, Integer> districts = getDistricts(countryId);
+        ArrayList<City> cities = new ArrayList<City>();
+        for (int districtId : districts.values()) {
+            try {
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE district_ref=?");
+                statement.setInt(1, districtId);
+                ResultSet result = statement.executeQuery();
+                cities.add(new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"), result.getInt("area_code")));
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return cities;
+    }
+
     public static City getCity(int id) {
         City city = null;
         try {
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE id=?");
             statement.setInt(1, id);
             ResultSet result = statement.executeQuery();
-            city = new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"));
+            city = new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"), result.getInt("area_code"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -291,6 +352,20 @@ public class DBInterfaceProvider {
         return heading;
     }
 
+    public static HashMap<String, Integer> getHeadings() {
+        HashMap<String, Integer> headings = new HashMap<String, Integer>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM heading");
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                headings.put(result.getString("name"), result.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return headings;
+    }
+
     public static Owner getOwner(int id) {
         Owner owner = null;
         try {
@@ -354,12 +429,52 @@ public class DBInterfaceProvider {
             statement.setInt(1, owner.getId());
             ResultSet result = statement.executeQuery();
             while (result.next()) {
-                phoneNumbers.add(new PhoneNumber(getHeading(result.getInt("heading_ref")), owner, result.getString("number")));
+                phoneNumbers.add(new PhoneNumber(result.getInt("id"), getHeading(result.getInt("heading_ref")), owner, result.getString("number")));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return phoneNumbers;
+    }
+
+    public static ArrayList<PhoneNumber> getPhoneNumbers() {
+        ArrayList<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM phone_number");
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                phoneNumbers.add(new PhoneNumber(result.getInt("id"), getHeading(result.getInt("heading_ref")), getOwner(result.getInt("ownership_ref")), result.getString("number")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return phoneNumbers;
+    }
+
+    public static PhoneNumber getPhoneNumber(String number) {
+        PhoneNumber phoneNumber = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM phone_number WHERE number=?");
+            statement.setString(1, number);
+            ResultSet result = statement.executeQuery();
+            phoneNumber = new PhoneNumber(result.getInt("id"), getHeading(result.getInt("heading_ref")), getOwner(result.getInt("ownership_ref")), result.getString("number"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return phoneNumber;
+    }
+
+    public static void savePhoneNumber(Heading heading, Owner owner, String number) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO phone_number (heading_ref, number, ownership_ref) VALUES (?)");
+            statement.setInt(1, heading.getId());
+            statement.setString(2, number);
+            statement.setInt(3, owner.getOwnership());
+            System.out.println("savePhoneNumber heading=" + heading.toString() + " number=" + number + " owner=" + owner.toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void saveLegalEntity(LegalEntity legalEntity) {
