@@ -25,6 +25,7 @@ public class ListWindow {
     private Table table;
     private GridData gd_table;
 
+    private TableColumn tcId;
     private TableColumn tcName;
     private TableColumn tcDOB;
     private TableColumn tcAddress;
@@ -63,7 +64,7 @@ public class ListWindow {
         }
     }
 
-    public void construct(Display display, int type) {
+    private void construct(Display display, int type) {
         shell = new Shell(display);
         shell.setSize(900, 600);
         shell.setLayout(new GridLayout(7, false));
@@ -73,9 +74,11 @@ public class ListWindow {
 
         btnEdit = new Button(shell, SWT.NONE);
         btnEdit.setText("Edit...");
+        btnEdit.setEnabled(false);
 
         btnDelete = new Button(shell, SWT.NONE);
         btnDelete.setText("Delete");
+        btnDelete.setEnabled(false);
         new Label(shell, SWT.NONE);
 
         txtSearch = new Text(shell, SWT.BORDER);
@@ -98,6 +101,7 @@ public class ListWindow {
 
         if(type == ListWindow.NATURAL_PERSON) {
             shell.setText("Natural Person List");
+            tcId = new TableColumn(table, SWT.LEFT);
             tcName = new TableColumn(table, SWT.LEFT);
             tcName.setText("Full name");
             tcName.setWidth(150);
@@ -126,7 +130,34 @@ public class ListWindow {
                     });
                 }
             });
-        }
 
+            table.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    btnDelete.setEnabled(true);
+                    if(table.getSelection().length == 1) {
+                        btnEdit.setEnabled(true);
+                    } else {
+                        btnEdit.setEnabled(false);
+                    }
+                }
+            });
+
+            btnEdit.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    NaturalPersonWindow naturalPersonEditWindow = new NaturalPersonWindow(display);
+                    naturalPersonEditWindow.prefill(DBInterfaceProvider.getNaturalPerson(Integer.parseInt(table.getSelection()[0].getText())));
+                    naturalPersonEditWindow.open();
+
+                    naturalPersonEditWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                        @Override
+                        public void handleEvent(Event event) {
+                            prefill(ListWindow.NATURAL_PERSON);
+                        }
+                    });
+                }
+            });
+        }
     }
 }
