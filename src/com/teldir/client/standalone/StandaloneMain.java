@@ -207,8 +207,18 @@ public class StandaloneMain {
         debugPhoneNumberShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
+                /*
                 Shell debugPhoneNumberShell = PhoneNumberShellConstructor.construct(display);
                 debugPhoneNumberShell.open();
+                */
+                /*
+                PhoneNumberWindow debugPhoneNumberWindow = new PhoneNumberWindow(display);
+                debugPhoneNumberWindow.open();
+                */
+                MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+                messageBox.setText("Debug unavailable");
+                messageBox.setMessage("Debug unavailable because Owner object required.");
+                messageBox.open();
             }
         });
 
