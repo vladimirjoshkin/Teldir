@@ -3,14 +3,12 @@ package com.teldir.core;
 public class Country {
     private int id;
     private String name;
+    private int code;
 
-    public Country(int id) {
-        this.id = id;
-    }
-
-    public Country(int id, String name) {
+    public Country(int id, String name, int code) {
         this.id = id;
         this.name = name;
+        this.code = code;
     }
 
     public int getId() {
@@ -21,8 +19,12 @@ public class Country {
         return name;
     }
 
+    public int getCode() {
+        return code;
+    }
+
     public String toString() {
-        return "{ id=" + id + " name=" + name +" }";
+        return "{Country id=" + id + " name=" + name + " code=" + code + " }";
     }
 
     public boolean isSame(Country country) {
