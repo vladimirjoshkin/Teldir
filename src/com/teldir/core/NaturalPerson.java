@@ -1,7 +1,6 @@
 package com.teldir.core;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.regex.Pattern;
 
 public class NaturalPerson {
@@ -54,7 +53,9 @@ public class NaturalPerson {
     }
 
     public String[] toStringArray() {
-        return new String[]{firstName + " " + familyName + " " + patronymic + " " + "ID=" + getId() + " ",
+        return new String[] {
+                String.valueOf(id),
+                firstName + " " + familyName + " " + patronymic + " " + "ID=" + getId() + " ",
                 dateOfBirth,
                 livingAddress.toString(),
                 getPhoneNumbersAsString()
