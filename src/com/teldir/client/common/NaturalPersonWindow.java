@@ -65,7 +65,10 @@ public class NaturalPersonWindow {
         if(prefilled) {
             if (!txtFirstName.getText().equals(naturalPerson.getFirstName()) ||
             !txtLastName.getText().equals(naturalPerson.getFamilyName()) ||
-            !txtPatronymic.getText().equals(naturalPerson.getPatronymic())) {
+            !txtPatronymic.getText().equals(naturalPerson.getPatronymic()) ||
+            dtDOB.getYear() != naturalPerson.getDOBYear() ||
+            dtDOB.getMonth() != naturalPerson.getDOBMonth() ||
+            dtDOB.getDay() != naturalPerson.getDOBDay()) {
                 return true;
             } else {
                 return false;
@@ -94,7 +97,7 @@ public class NaturalPersonWindow {
         }
     }
 
-    public void construct(Display display) {
+    private void construct(Display display) {
         shell = new Shell(display);
         shell.setText("Natural Person Shell");
         shell.setSize(900, 410);
@@ -204,6 +207,8 @@ public class NaturalPersonWindow {
                     if (response == SWT.YES) {
                         shell.close();
                     }
+                } else {
+                    shell.close();
                 }
             }
         });
