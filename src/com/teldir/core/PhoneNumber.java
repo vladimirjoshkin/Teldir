@@ -47,6 +47,7 @@ public class PhoneNumber {
     }
 
     public int getBody() {
+        System.out.println("PhoneNumber getBody number=" + number + " body=" + number.split(Pattern.quote(")"))[1]);
         return Integer.parseInt(number.split(Pattern.quote(")"))[1]);
     }
 }

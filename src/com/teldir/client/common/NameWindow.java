@@ -86,14 +86,27 @@ public class NameWindow {
         btnSave.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
-                if(districtWithEnteredNameAlreadyExistsInCountry()) {
-                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
-                    messageBox.setText("Error");
-                    messageBox.setMessage("District with same name already exists in " + country.getName() + ".\nPlease use another name.");
-                    messageBox.open();
-                } else {
-                    DBInterfaceProvider.saveDistrict(country, txtName.getText());
-                    shell.close();
+                if(type == DISTRICT) {
+                    if(districtWithEnteredNameAlreadyExistsInCountry()) {
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+                        messageBox.setText("Error");
+                        messageBox.setMessage("District with same name already exists in " + country.getName() + ".\nPlease use another name.");
+                        messageBox.open();
+                    } else {
+                        DBInterfaceProvider.saveDistrict(country, txtName.getText());
+                        shell.close();
+                    }
+                } else if(type == HEADING) {
+                    if(headingWithEnteredNameAlreadyExists()) {
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+                        messageBox.setText("Error");
+                        messageBox.setMessage("Heading with same name already exists.\nPlease use another name.");
+                        messageBox.open();
+                    } else {
+                        String headingName = txtName.getText();
+                        DBInterfaceProvider.saveHeading(headingName);
+                        shell.close();
+                    }
                 }
             }
         });
@@ -101,6 +114,16 @@ public class NameWindow {
 
     public Button getBtnSave() {
         return btnSave;
+    }
+
+    private boolean headingWithEnteredNameAlreadyExists() {
+        HashMap<String, Integer> headings = DBInterfaceProvider.getHeadings();
+        for(String headingName : headings.keySet()) {
+            if(txtName.getText().equals(headingName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean districtWithEnteredNameAlreadyExistsInCountry() {

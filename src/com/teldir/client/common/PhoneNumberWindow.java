@@ -14,7 +14,9 @@ import java.util.HashMap;
 
 public class PhoneNumberWindow {
     private Shell shell;
+
     private Label lblHeading;
+    private Button btnHeadingNew;
     private Combo comboHeading;
     private Label lblCountry;
     private Combo comboCountry;
@@ -27,6 +29,7 @@ public class PhoneNumberWindow {
     private Text txtPhoneNumberAreaCode;
     private Text txtPhoneNumberBody;
     private Label label;
+
     private Button btnCancel;
     private Button btnSave;
 
@@ -61,9 +64,10 @@ public class PhoneNumberWindow {
             if(phoneNumber.getAreaCode() == _cities.get(i).getCode()) {
                 btnPhoneNumberCity.setSelection(true);
                 comboCity.select(getIndex(_cities.get(i).getId(), cities));
-                txtPhoneNumberAreaCode.setText(String.valueOf(_cities.get(i).getCode()));
+                // txtPhoneNumberAreaCode.setText(String.valueOf(_cities.get(i).getCode()));
             }
         }
+        txtPhoneNumberAreaCode.setText(String.valueOf(phoneNumber.getAreaCode()));
         txtPhoneNumberBody.setText(String.valueOf(phoneNumber.getBody()));
         shell.setText("Edit " + phoneNumber.getNumber());
     }
@@ -79,8 +83,27 @@ public class PhoneNumberWindow {
         lblHeading.setText("Heading");
 
         comboHeading = new Combo(shell, SWT.NONE);
-        comboHeading.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+        comboHeading.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         updateHeadings();
+
+        btnHeadingNew = new Button(shell, SWT.NONE);
+        btnHeadingNew.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        btnHeadingNew.setText("New Heading...");
+
+        btnHeadingNew.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                NameWindow headingWindow = new NameWindow(display, NameWindow.HEADING);
+                headingWindow.open();
+
+                headingWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        updateHeadings();
+                    }
+                });
+            }
+        });
 
         lblCountry = new Label(shell, SWT.NONE);
         lblCountry.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

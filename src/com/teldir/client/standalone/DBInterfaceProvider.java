@@ -364,6 +364,17 @@ public class DBInterfaceProvider {
         return headings;
     }
 
+    public static void saveHeading(String name) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO heading (name) VALUES (?)");
+            statement.setString(1, name);
+            System.out.println("saveHeading name=" + name);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static Owner getOwner(int id) {
         Owner owner = null;
         try {
