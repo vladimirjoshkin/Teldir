@@ -43,4 +43,22 @@ public class LegalEntity {
         }
         return outArr;
     }
+
+    public String[] toStringArray() {
+        return new String[] {
+                String.valueOf(id),
+                fullName + " " + "ID=" + getId() + " ",
+                address.toString(),
+                getPhoneNumbersAsString()
+        };
+    }
+
+    public String getPhoneNumbersAsString() {
+        StringBuilder outString = new StringBuilder();
+        for (int i = 0; i < phoneNumbers.size(); i++) {
+            outString.append(phoneNumbers.get(i).getNumber()).append(" ");
+        }
+        return outString.toString();
+    }
+
 }

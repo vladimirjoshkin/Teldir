@@ -123,6 +123,14 @@ public class StandaloneMain {
         MenuItem showLegalEntityListItem = new MenuItem(legalEntitySubmenu, SWT.PUSH);
         showLegalEntityListItem.setText("Show Legal Entity List...");
 
+        showLegalEntityListItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                ListWindow listWindow = new ListWindow(display, ListWindow.LEGAL_ENTITY);
+                listWindow.open();
+            }
+        });
+
         /* Debug */
         MenuItem debugItem = new MenuItem(bar, SWT.CASCADE);
         debugItem.setText("DEBUG");

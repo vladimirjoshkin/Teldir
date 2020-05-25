@@ -1,6 +1,7 @@
 package com.teldir.client.common;
 
 import com.teldir.client.standalone.DBInterfaceProvider;
+import com.teldir.core.LegalEntity;
 import com.teldir.core.NaturalPerson;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -57,6 +58,22 @@ public class ListWindow {
                 MessageBox messageBox = new MessageBox(shell, SWT.ERROR);
                 messageBox.setText("Error");
                 messageBox.setMessage("Natural Person List cannot be loaded from database.\n" + e.getMessage());
+                messageBox.open();
+            }
+            //TableItem tiTest = new TableItem(table, SWT.NONE);
+            //tiTest.setText(new String[] {"Test name", "01.01.2000", "Test addr", "+7test00-00-00"});
+        } else if(type == ListWindow.LEGAL_ENTITY) {
+            table.removeAll();
+            ResultSet resultSet = DBInterfaceProvider.getLegalEntities();
+            try {
+                while (resultSet.next()) {
+                    TableItem tcItem = new TableItem(table, SWT.NONE);
+                    tcItem.setText(DBInterfaceProvider.getLegalEntity(resultSet.getInt("id")).toStringArray());
+                }
+            } catch (SQLException e) {
+                MessageBox messageBox = new MessageBox(shell, SWT.ERROR);
+                messageBox.setText("Error");
+                messageBox.setMessage("Legal Entity List cannot be loaded from database.\n" + e.getMessage());
                 messageBox.open();
             }
             //TableItem tiTest = new TableItem(table, SWT.NONE);
@@ -154,6 +171,64 @@ public class ListWindow {
                         @Override
                         public void handleEvent(Event event) {
                             prefill(ListWindow.NATURAL_PERSON);
+                        }
+                    });
+                }
+            });
+        }
+
+        if(type == ListWindow.LEGAL_ENTITY) {
+            shell.setText("Legal Entity List");
+            tcId = new TableColumn(table, SWT.LEFT);
+            tcName = new TableColumn(table, SWT.LEFT);
+            tcName.setText("Name");
+            tcName.setWidth(150);
+            tcAddress = new TableColumn(table, SWT.LEFT);
+            tcAddress.setText("Address");
+            tcAddress.setWidth(200);
+            tcPhoneNumbers = new TableColumn(table, SWT.LEFT);
+            tcPhoneNumbers.setText("Phone numbers");
+            tcPhoneNumbers.setWidth(100);
+            prefill(ListWindow.LEGAL_ENTITY);
+
+            btnAdd.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    LegalEntityWindow legalEntityWindow = new LegalEntityWindow(display);
+                    legalEntityWindow.open();
+
+                    legalEntityWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                        @Override
+                        public void handleEvent(Event event) {
+                            prefill(ListWindow.LEGAL_ENTITY);
+                        }
+                    });
+                }
+            });
+
+            table.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    btnDelete.setEnabled(true);
+                    if(table.getSelection().length == 1) {
+                        btnEdit.setEnabled(true);
+                    } else {
+                        btnEdit.setEnabled(false);
+                    }
+                }
+            });
+
+            btnEdit.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    LegalEntityWindow legalEntityEditWindow = new LegalEntityWindow(display);
+                    legalEntityEditWindow.prefill(DBInterfaceProvider.getLegalEntity(Integer.parseInt(table.getSelection()[0].getText())));
+                    legalEntityEditWindow.open();
+
+                    legalEntityEditWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                        @Override
+                        public void handleEvent(Event event) {
+                            prefill(ListWindow.LEGAL_ENTITY);
                         }
                     });
                 }

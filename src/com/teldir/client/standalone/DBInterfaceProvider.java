@@ -230,6 +230,17 @@ public class DBInterfaceProvider {
         return result;
     }
 
+    public static ResultSet getLegalEntities() {
+        ResultSet result = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity");
+            result = statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
     public static Owner saveOwner(NaturalPerson naturalPerson) {
         Owner owner = null;
         try {

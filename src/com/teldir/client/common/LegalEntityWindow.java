@@ -4,7 +4,10 @@ import com.teldir.client.standalone.DBInterfaceProvider;
 import com.teldir.core.Address;
 import com.teldir.core.LegalEntity;
 import com.teldir.core.NaturalPerson;
+import com.teldir.core.PhoneNumber;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -135,7 +138,7 @@ public class LegalEntityWindow {
                         public void handleEvent(Event event) {
                             System.out.println("LegalEntityWindow > PhoneNumberWindow : btnSave Event : list update");
                             listPhoneNumbers.removeAll();
-                            listPhoneNumbers.setItems(DBInterfaceProvider.getNaturalPerson(legalEntity.getId()).getPhoneNumbersAsStringArray());
+                            listPhoneNumbers.setItems(DBInterfaceProvider.getLegalEntity(legalEntity.getId()).getPhoneNumbersAsStringArray());
                         }
                     });
                 }
@@ -148,11 +151,64 @@ public class LegalEntityWindow {
         btnPhoneNumberEdit.setEnabled(false);
         new Label(shell, SWT.NONE);
 
+        btnPhoneNumberEdit.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                String selectedNumber = listPhoneNumbers.getSelection()[0];
+                PhoneNumber selectedPhoneNumber = DBInterfaceProvider.getPhoneNumber(selectedNumber);
+                PhoneNumberWindow phoneNumberWindow = new PhoneNumberWindow(display, DBInterfaceProvider.getOwner(legalEntity));
+                phoneNumberWindow.prefill(selectedPhoneNumber);
+                phoneNumberWindow.open();
+                phoneNumberWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        System.out.println("LegalEntityWindow > PhoneNumberWindow : btnSave Event : list update");
+                        listPhoneNumbers.removeAll();
+                        listPhoneNumbers.setItems(DBInterfaceProvider.getLegalEntity(legalEntity.getId()).getPhoneNumbersAsStringArray());
+                    }
+                });
+            }
+        });
+
         btnPhoneNumberDelete = new Button(shell, SWT.NONE);
         btnPhoneNumberDelete.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         btnPhoneNumberDelete.setText("Delete");
         btnPhoneNumberDelete.setEnabled(false);
         new Label(shell, SWT.NONE);
+
+        btnPhoneNumberDelete.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                String selectedNumber = listPhoneNumbers.getSelection()[0];
+                PhoneNumber selectedPhoneNumber = DBInterfaceProvider.getPhoneNumber(selectedNumber);
+                MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                messageBox.setText("Confirmation");
+                messageBox.setMessage("Are you sure you want to delete number " + selectedPhoneNumber.getNumber() + "?");
+                int response = messageBox.open();
+                if (response == SWT.YES) {
+                    DBInterfaceProvider.deletePhoneNumber(selectedPhoneNumber.getId());
+
+                    listPhoneNumbers.removeAll();
+                    listPhoneNumbers.setItems(DBInterfaceProvider.getLegalEntity(legalEntity.getId()).getPhoneNumbersAsStringArray());
+
+                    btnPhoneNumberEdit.setEnabled(false);
+                    btnPhoneNumberDelete.setEnabled(false);
+                }
+            }
+        });
+
+        listPhoneNumbers.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                btnPhoneNumberEdit.setEnabled(true);
+                btnPhoneNumberDelete.setEnabled(true);
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
 
         label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
         label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));

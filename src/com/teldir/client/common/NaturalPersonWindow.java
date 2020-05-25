@@ -237,13 +237,19 @@ public class NaturalPersonWindow {
             public void handleEvent(Event event) {
                 String selectedNumber = list.getSelection()[0];
                 PhoneNumber selectedPhoneNumber = DBInterfaceProvider.getPhoneNumber(selectedNumber);
-                DBInterfaceProvider.deletePhoneNumber(selectedPhoneNumber.getId());
+                MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                messageBox.setText("Confirmation");
+                messageBox.setMessage("Are you sure you want to delete number " + selectedPhoneNumber.getNumber() + "?");
+                int response = messageBox.open();
+                if (response == SWT.YES) {
+                    DBInterfaceProvider.deletePhoneNumber(selectedPhoneNumber.getId());
 
-                list.removeAll();
-                list.setItems(DBInterfaceProvider.getNaturalPerson(naturalPerson.getId()).getPhoneNumbersAsStringArray());
+                    list.removeAll();
+                    list.setItems(DBInterfaceProvider.getNaturalPerson(naturalPerson.getId()).getPhoneNumbersAsStringArray());
 
-                btnPhoneNumberEdit.setEnabled(false);
-                btnPhoneNumberDelete.setEnabled(false);
+                    btnPhoneNumberEdit.setEnabled(false);
+                    btnPhoneNumberDelete.setEnabled(false);
+                }
             }
         });
 
