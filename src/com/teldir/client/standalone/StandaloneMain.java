@@ -112,6 +112,14 @@ public class StandaloneMain {
         MenuItem createNewLegalEntityItem = new MenuItem(legalEntitySubmenu, SWT.PUSH);
         createNewLegalEntityItem.setText("Create new Legal Entity...");
 
+        createNewLegalEntityItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                LegalEntityWindow legalEntityWindow = new LegalEntityWindow(display);
+                legalEntityWindow.open();
+            }
+        });
+
         MenuItem showLegalEntityListItem = new MenuItem(legalEntitySubmenu, SWT.PUSH);
         showLegalEntityListItem.setText("Show Legal Entity List...");
 
@@ -160,8 +168,12 @@ public class StandaloneMain {
         debugLegalEntityShellItem.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event event) {
+                /*
                 Shell debugLegalEntityShell = LegalEntityShellConstructor.construct(display);
                 debugLegalEntityShell.open();
+                */
+                LegalEntityWindow debugLegalEntityWindow = new LegalEntityWindow(display);
+                debugLegalEntityWindow.open();
             }
         });
 

@@ -66,7 +66,7 @@ public class NaturalPersonWindow {
         btnPhoneNumberAdd.setEnabled(true);
     }
 
-    public boolean changed() {
+    private boolean changed() {
         if(prefilled) {
             if (!txtFirstName.getText().equals(naturalPerson.getFirstName()) ||
             !txtLastName.getText().equals(naturalPerson.getFamilyName()) ||

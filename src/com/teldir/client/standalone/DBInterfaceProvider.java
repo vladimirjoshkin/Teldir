@@ -244,6 +244,20 @@ public class DBInterfaceProvider {
         return owner;
     }
 
+    public static Owner saveOwner(LegalEntity legalEntity) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO ownership (legal_entity_ref) VALUES (?)");
+            statement.setInt(1, legalEntity.getId());
+            System.out.println("saveOwner leId=" + legalEntity.getId());
+            statement.executeUpdate();
+            owner = getOwner(legalEntity);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
     public static NaturalPerson saveNaturalPerson(String firstName, String familyName, String patronymic, String dateOfBirdth, Address address) {
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO natural_person (first_name, family_name, patronymic, date_of_birth, address_ref) VALUES (?, ?, ?, ?, ?)");
@@ -274,11 +288,43 @@ public class DBInterfaceProvider {
         }
         return naturalPerson;
     }
-    /*
-    public static NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) {
 
+    public static LegalEntity saveLegalEntity(String name, Address address) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO legal_entity (name, address_ref) VALUES (?, ?)");
+            statement.setString(1, name);
+            statement.setInt(2, address.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        LegalEntity legalEntity = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity WHERE name=? AND address_ref=?");
+            statement.setString(1, name);
+            statement.setInt(2, address.getId());
+            ResultSet result = statement.executeQuery();
+            int legalEntityId = result.getInt("id");
+            legalEntity = getLegalEntityWithoutOwner(legalEntityId);
+            saveOwner(legalEntity);
+            legalEntity = getLegalEntity(legalEntityId);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return legalEntity;
     }
-    */
+
+    public static void updateLegalEntity(int id, String name) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("UPDATE legal_entity SET name=? WHERE id=?");
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static NaturalPerson getNaturalPerson(int id) {
         NaturalPerson naturalPerson = null;
         try {
@@ -319,7 +365,7 @@ public class DBInterfaceProvider {
         return getNaturalPerson(id);
     }
 
-    public static NaturalPerson getNaturalPersonWithoutOwner(int id) {
+    private static NaturalPerson getNaturalPersonWithoutOwner(int id) {
         NaturalPerson naturalPerson = null;
         try {
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM natural_person WHERE id=?");
@@ -399,6 +445,19 @@ public class DBInterfaceProvider {
             statement.setInt(1, naturalPersonId);
             ResultSet result = statement.executeQuery();
             owner = new Owner(result.getInt("id"), Owner.NATURAL_PERSON, result.getInt("natural_person_ref"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return owner;
+    }
+
+    public static Owner getOwnerByLegalEntityId(int legalEntityId) {
+        Owner owner = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM ownership WHERE legal_entity_ref=?");
+            statement.setInt(1, legalEntityId);
+            ResultSet result = statement.executeQuery();
+            owner = new Owner(result.getInt("id"), Owner.LEGAL_ENTITY, result.getInt("legal_entity_ref"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -511,14 +570,40 @@ public class DBInterfaceProvider {
         }
     }
 
-    public static void saveLegalEntity(LegalEntity legalEntity) {
-
-    }
-    /*
     public static LegalEntity getLegalEntity(int id) {
-        return new LegalEntity(-1);
+        LegalEntity legalEntity = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            int legalEntityId = result.getInt("id");
+            Owner owner = getOwnerByLegalEntityId(legalEntityId);
+            if(Objects.isNull(owner)) {
+                System.out.println("owner is null at " + getLegalEntityWithoutOwner(legalEntityId).getFullName() + " ID=" + legalEntityId);
+            }
+            legalEntity = new LegalEntity(result.getInt("id"),
+                    result.getString("name"),
+                    getAddress(result.getInt("address_ref")),
+                    owner,
+                    getPhoneNumbers(owner));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return legalEntity;
     }
-    */
+
+    private static LegalEntity getLegalEntityWithoutOwner(int id) {
+        LegalEntity legalEntity = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity WHERE id=?");
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            legalEntity = new LegalEntity(result.getInt("id"), result.getString("name"), getAddress(result.getInt("address_ref")));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return legalEntity;
+    }
 
     public static void saveCountry(int id, String name, int code) {
         try {
