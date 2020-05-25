@@ -3,8 +3,11 @@ package com.teldir.client.common;
 import com.teldir.client.standalone.DBInterfaceProvider;
 import com.teldir.core.Address;
 import com.teldir.core.NaturalPerson;
+import com.teldir.core.PhoneNumber;
 import com.teldir.core.StringUtils;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -59,6 +62,8 @@ public class NaturalPersonWindow {
         address = naturalPerson.getLivingAddress();
         txtAddress.setText(address.toString());
         list.setItems(naturalPerson.getPhoneNumbersAsStringArray());
+
+        btnPhoneNumberAdd.setEnabled(true);
     }
 
     public boolean changed() {
@@ -175,17 +180,85 @@ public class NaturalPersonWindow {
         btnPhoneNumberAdd = new Button(shell, SWT.NONE);
         btnPhoneNumberAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         btnPhoneNumberAdd.setText("Add...");
+        btnPhoneNumberAdd.setEnabled(false);
         new Label(shell, SWT.NONE);
+
+        btnPhoneNumberAdd.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (prefilled) {
+                    PhoneNumberWindow phoneNumberWindow = new PhoneNumberWindow(display, DBInterfaceProvider.getOwner(naturalPerson));
+                    phoneNumberWindow.open();
+                    phoneNumberWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                        @Override
+                        public void handleEvent(Event event) {
+                            System.out.println("NaturalPersonWindow > PhoneNumberWindow : btnSave Event : list update");
+                            list.removeAll();
+                            list.setItems(DBInterfaceProvider.getNaturalPerson(naturalPerson.getId()).getPhoneNumbersAsStringArray());
+                        }
+                    });
+                }
+            }
+        });
 
         btnPhoneNumberEdit = new Button(shell, SWT.NONE);
         btnPhoneNumberEdit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         btnPhoneNumberEdit.setText("Edit...");
+        btnPhoneNumberEdit.setEnabled(false);
         new Label(shell, SWT.NONE);
+
+        btnPhoneNumberEdit.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                String selectedNumber = list.getSelection()[0];
+                PhoneNumber selectedPhoneNumber = DBInterfaceProvider.getPhoneNumber(selectedNumber);
+                PhoneNumberWindow phoneNumberWindow = new PhoneNumberWindow(display, DBInterfaceProvider.getOwner(naturalPerson));
+                phoneNumberWindow.prefill(selectedPhoneNumber);
+                phoneNumberWindow.open();
+                phoneNumberWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        System.out.println("NaturalPersonWindow > PhoneNumberWindow : btnSave Event : list update");
+                        list.removeAll();
+                        list.setItems(DBInterfaceProvider.getNaturalPerson(naturalPerson.getId()).getPhoneNumbersAsStringArray());
+                    }
+                });
+            }
+        });
 
         btnPhoneNumberDelete = new Button(shell, SWT.NONE);
         btnPhoneNumberDelete.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         btnPhoneNumberDelete.setText("Delete");
+        btnPhoneNumberDelete.setEnabled(false);
         new Label(shell, SWT.NONE);
+
+        btnPhoneNumberDelete.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                String selectedNumber = list.getSelection()[0];
+                PhoneNumber selectedPhoneNumber = DBInterfaceProvider.getPhoneNumber(selectedNumber);
+                DBInterfaceProvider.deletePhoneNumber(selectedPhoneNumber.getId());
+
+                list.removeAll();
+                list.setItems(DBInterfaceProvider.getNaturalPerson(naturalPerson.getId()).getPhoneNumbersAsStringArray());
+
+                btnPhoneNumberEdit.setEnabled(false);
+                btnPhoneNumberDelete.setEnabled(false);
+            }
+        });
+
+        list.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent selectionEvent) {
+                btnPhoneNumberEdit.setEnabled(true);
+                btnPhoneNumberDelete.setEnabled(true);
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent selectionEvent) {
+
+            }
+        });
 
         lblHorizontalLine = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
         lblHorizontalLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));

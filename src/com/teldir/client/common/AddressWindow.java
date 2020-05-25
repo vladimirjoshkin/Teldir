@@ -94,6 +94,20 @@ public class AddressWindow {
         btnCountryNew = new Button(shell, SWT.NONE);
         btnCountryNew.setText("New Country...");
 
+        btnCountryNew.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                CountryWindow countryWindow = new CountryWindow(display);
+                countryWindow.open();
+                countryWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        updateCountries();
+                    }
+                });
+            }
+        });
+
         lblDistrict = new Label(shell, SWT.NONE);
         lblDistrict.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblDistrict.setText("District");
@@ -103,6 +117,22 @@ public class AddressWindow {
 
         btnDistrictNew = new Button(shell, SWT.NONE);
         btnDistrictNew.setText("New District...");
+        btnDistrictNew.setEnabled(false);
+
+        btnDistrictNew.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                Country selectedCountry = DBInterfaceProvider.getCountry(getId(comboCountry, countries));
+                NameWindow districtWindow = new NameWindow(display, selectedCountry);
+                districtWindow.open();
+                districtWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        updateDistricts();
+                    }
+                });
+            }
+        });
 
         lblCity = new Label(shell, SWT.NONE);
         lblCity.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -116,6 +146,7 @@ public class AddressWindow {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 updateDistricts();
+                btnDistrictNew.setEnabled(true);
             }
 
             @Override
@@ -128,6 +159,7 @@ public class AddressWindow {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 updateCities();
+                btnCityNew.setEnabled(true);
             }
 
             @Override
@@ -138,6 +170,23 @@ public class AddressWindow {
 
         btnCityNew = new Button(shell, SWT.NONE);
         btnCityNew.setText("New City...");
+        btnCityNew.setEnabled(false);
+
+        btnCityNew.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                District selectedDistrict = DBInterfaceProvider.getDistrict(getId(comboDistrict, districts));
+                CityWindow cityWindow = new CityWindow(display, selectedDistrict);
+                cityWindow.open();
+
+                cityWindow.getBtnSave().addListener(SWT.Selection, new Listener() {
+                    @Override
+                    public void handleEvent(Event event) {
+                        updateCities();
+                    }
+                });
+            }
+        });
 
         lblStreet = new Label(shell, SWT.NONE);
         lblStreet.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

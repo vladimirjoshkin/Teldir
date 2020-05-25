@@ -1,9 +1,7 @@
 package com.teldir.client.standalone;
 
 import com.teldir.core.*;
-import sun.swing.MenuItemLayoutHelper;
 
-import javax.print.attribute.standard.MediaSize;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -466,11 +464,36 @@ public class DBInterfaceProvider {
 
     public static void savePhoneNumber(Heading heading, Owner owner, String number) {
         try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO phone_number (heading_ref, number, ownership_ref) VALUES (?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO phone_number (heading_ref, number, ownership_ref) VALUES (?, ?, ?)");
             statement.setInt(1, heading.getId());
             statement.setString(2, number);
-            statement.setInt(3, owner.getOwnership());
+            statement.setInt(3, owner.getId());
             System.out.println("savePhoneNumber heading=" + heading.toString() + " number=" + number + " owner=" + owner.toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void updatePhoneNumber(int id, Heading heading, Owner owner, String number) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("UPDATE phone_number SET heading_ref=?, number=?, ownership_ref=? WHERE id=?");
+            statement.setInt(1, heading.getId());
+            statement.setString(2, number);
+            statement.setInt(3, owner.getId());
+            statement.setInt(4, id);
+            System.out.println("updatePhoneNumber id=" + id + "heading=" + heading.toString() + " number=" + number + " owner=" + owner.toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void deletePhoneNumber(int id) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM phone_number WHERE id=?");
+            statement.setInt(1, id);
+            System.out.println("deletePhoneNumber id=" + id + "}");
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -485,4 +508,42 @@ public class DBInterfaceProvider {
         return new LegalEntity(-1);
     }
     */
+
+    public static void saveCountry(int id, String name, int code) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO country (id, name, country_code) VALUES (?, ?, ?)");
+            statement.setInt(1, id);
+            statement.setString(2, name);
+            statement.setInt(3, code);
+            System.out.println("saveCountry id=" + id + " name=" + name + " code=" + code);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void saveDistrict(Country country, String districtName) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO district (country_ref, name) VALUES (?, ?)");
+            statement.setInt(1, country.getId());
+            statement.setString(2, districtName);
+            System.out.println("saveDistrict country=" + country.toString() + " name=" + districtName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void saveCity(District district, String cityName, int cityCode) {
+        try {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO city (district_ref, name, area_code) VALUES (?, ?, ?)");
+            statement.setInt(1, district.getId());
+            statement.setString(2, cityName);
+            statement.setInt(3, cityCode);
+            System.out.println("saveCity district=" + district.toString() + " name=" + cityName + " cityCode=" + cityCode);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

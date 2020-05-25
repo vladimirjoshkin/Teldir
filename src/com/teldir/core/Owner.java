@@ -25,4 +25,8 @@ public class Owner {
     public int getOwnerId() {
         return ownerId;
     }
+
+    public String toString() {
+        return "{Owner " + " id=" + id + " ownership=" + ownership + " ownerId=" + ownerId  + "}";
+    }
 }

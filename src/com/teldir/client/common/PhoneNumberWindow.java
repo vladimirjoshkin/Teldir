@@ -36,6 +36,9 @@ public class PhoneNumberWindow {
     private HashMap<String, Integer> countries;
     private HashMap<String, Integer> cities;
 
+    private boolean prefilled = false;
+    private PhoneNumber prefilledPhoneNumber;
+
     public PhoneNumberWindow(Display display, Owner owner) {
         construct(display);
         this.owner = owner;
@@ -46,23 +49,28 @@ public class PhoneNumberWindow {
     }
 
     public void prefill(PhoneNumber phoneNumber) {
+        prefilled = true;
+        prefilledPhoneNumber = phoneNumber;
         comboHeading.select(getIndex(phoneNumber.getHeading().getId(), headings));
         Country country = DBInterfaceProvider.getCountryByCode(phoneNumber.getCountryCode());
         comboCountry.select(getIndex(country.getId(), countries));
+        txtPhoneNumberCountryCode.setText("+" + country.getCode());
         updateCities();
         ArrayList<City> _cities = DBInterfaceProvider.getCountryCitiesArrayList(country.getId());
         for(int i = 0; i < _cities.size(); i++) {
             if(phoneNumber.getAreaCode() == _cities.get(i).getCode()) {
                 btnPhoneNumberCity.setSelection(true);
                 comboCity.select(getIndex(_cities.get(i).getId(), cities));
+                txtPhoneNumberAreaCode.setText(String.valueOf(_cities.get(i).getCode()));
             }
         }
         txtPhoneNumberBody.setText(String.valueOf(phoneNumber.getBody()));
+        shell.setText("Edit " + phoneNumber.getNumber());
     }
 
     private void construct(Display display) {
         shell = new Shell(display);
-        shell.setText("Phone Number Shell");
+        shell.setText("New Phone Number");
         shell.setSize(900, 320);
         shell.setLayout(new GridLayout(4, false));
 
@@ -203,7 +211,11 @@ public class PhoneNumberWindow {
                         messageBox.open();
                     } else {
                         Heading heading = DBInterfaceProvider.getHeading(getId(comboHeading, headings));
-                        DBInterfaceProvider.savePhoneNumber(heading, owner, getNumber());
+                        if(prefilled) {
+                            DBInterfaceProvider.updatePhoneNumber(prefilledPhoneNumber.getId(), heading, owner, getNumber());
+                        } else {
+                            DBInterfaceProvider.savePhoneNumber(heading, owner, getNumber());
+                        }
                         shell.close();
                     }
                 }
@@ -260,7 +272,7 @@ public class PhoneNumberWindow {
     }
 
     private String getNumber() {
-        return txtPhoneNumberCountryCode.getText() + txtPhoneNumberAreaCode.getText() + txtPhoneNumberBody.getText();
+        return txtPhoneNumberCountryCode.getText() + "(" + txtPhoneNumberAreaCode.getText() + ")" + txtPhoneNumberBody.getText();
     }
 
     private boolean filledCorrectly() {
@@ -276,5 +288,13 @@ public class PhoneNumberWindow {
             messageBox.open();
             return false;
         }
+    }
+
+    public Button getBtnSave() {
+        return btnSave;
+    }
+
+    public Shell getShell() {
+        return shell;
     }
 }
