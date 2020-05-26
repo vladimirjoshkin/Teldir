@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class ListWindow {
@@ -81,6 +82,44 @@ public class ListWindow {
         }
     }
 
+    private void filter(int type, String contain) {
+        if(type == ListWindow.NATURAL_PERSON) {
+            prefill(ListWindow.NATURAL_PERSON);
+            ArrayList<Integer> naturalPersonMatchCriteriaId = new ArrayList<Integer>();
+            for(TableItem tableItem : table.getItems()) {
+                String tableItemText = "";
+                for(int i = 0; i < table.getColumnCount(); i++) {
+                    tableItemText += tableItem.getText(i) + " ";
+                }
+                if(tableItemText.contains(contain)) {
+                    naturalPersonMatchCriteriaId.add(Integer.parseInt(tableItem.getText()));
+                }
+            }
+            table.removeAll();
+            for(int i = 0; i < naturalPersonMatchCriteriaId.size(); i++) {
+                TableItem tcItem = new TableItem(table, SWT.NONE);
+                tcItem.setText(DBInterfaceProvider.getNaturalPerson(naturalPersonMatchCriteriaId.get(i)).toStringArray());
+            }
+        } else if(type == ListWindow.LEGAL_ENTITY) {
+            prefill(ListWindow.LEGAL_ENTITY);
+            ArrayList<Integer> legalEntityMatchCriteriaId = new ArrayList<Integer>();
+            for(TableItem tableItem : table.getItems()) {
+                String tableItemText = "";
+                for(int i = 0; i < table.getColumnCount(); i++) {
+                    tableItemText += tableItem.getText(i) + " ";
+                }
+                if(tableItemText.contains(contain)) {
+                    legalEntityMatchCriteriaId.add(Integer.parseInt(tableItem.getText()));
+                }
+            }
+            table.removeAll();
+            for(int i = 0; i < legalEntityMatchCriteriaId.size(); i++) {
+                TableItem tcItem = new TableItem(table, SWT.NONE);
+                tcItem.setText(DBInterfaceProvider.getLegalEntity(legalEntityMatchCriteriaId.get(i)).toStringArray());
+            }
+        }
+    }
+
     private void construct(Display display, int type) {
         shell = new Shell(display);
         shell.setSize(900, 600);
@@ -108,6 +147,7 @@ public class ListWindow {
 
         btnFilter = new Button(shell, SWT.TOGGLE);
         btnFilter.setText("Filter");
+        btnFilter.setVisible(false);
 
         table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
         gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 7, 1);
@@ -175,6 +215,32 @@ public class ListWindow {
                     });
                 }
             });
+
+            btnDelete.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    NaturalPerson selectedNaturalPerson = DBInterfaceProvider.getNaturalPerson(Integer.parseInt(table.getSelection()[0].getText()));
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                    messageBox.setText("Confirmation");
+                    messageBox.setMessage("You are about to delete " + selectedNaturalPerson.getFullName() + "." + "\n" + "Object deletion is permanent and cannot be aborted. All data, including phone numbers associated with " + selectedNaturalPerson.getFullName() + " will be permanently lost." + "\n" + "Delete " + selectedNaturalPerson.getFullName() + "?");
+                    int response = messageBox.open();
+                    if (response == SWT.YES) {
+                        DBInterfaceProvider.deleteNaturalPerson(selectedNaturalPerson);
+                        prefill(ListWindow.NATURAL_PERSON);
+                    }
+                }
+            });
+
+            btnSearch.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if(txtSearch.getText().length() > 0) {
+                        filter(ListWindow.NATURAL_PERSON, txtSearch.getText());
+                    } else {
+                        prefill(ListWindow.NATURAL_PERSON);
+                    }
+                }
+            });
         }
 
         if(type == ListWindow.LEGAL_ENTITY) {
@@ -231,6 +297,32 @@ public class ListWindow {
                             prefill(ListWindow.LEGAL_ENTITY);
                         }
                     });
+                }
+            });
+
+            btnDelete.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    LegalEntity selectedLegalEntity = DBInterfaceProvider.getLegalEntity(Integer.parseInt(table.getSelection()[0].getText()));
+                    MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+                    messageBox.setText("Confirmation");
+                    messageBox.setMessage("You are about to delete " + selectedLegalEntity.getFullName() + "." + "\n" + "Object deletion is permanent and cannot be aborted. All data, including phone numbers associated with " + selectedLegalEntity.getFullName() + " will be permanently lost." + "\n" + "Delete " + selectedLegalEntity.getFullName() + "?");
+                    int response = messageBox.open();
+                    if (response == SWT.YES) {
+                        DBInterfaceProvider.deleteLegalEntity(selectedLegalEntity);
+                        prefill(ListWindow.LEGAL_ENTITY);
+                    }
+                }
+            });
+
+            btnSearch.addListener(SWT.Selection, new Listener() {
+                @Override
+                public void handleEvent(Event event) {
+                    if(txtSearch.getText().length() > 0) {
+                        filter(ListWindow.LEGAL_ENTITY, txtSearch.getText());
+                    } else {
+                        prefill(ListWindow.LEGAL_ENTITY);
+                    }
                 }
             });
         }

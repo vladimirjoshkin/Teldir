@@ -300,6 +300,38 @@ public class DBInterfaceProvider {
         return naturalPerson;
     }
 
+    public static void deleteNaturalPerson(NaturalPerson naturalPerson) {
+        deleteNaturalPerson(naturalPerson.getId());
+    }
+
+    public static void deleteNaturalPerson(int naturalPersonId) {
+        Owner owner = getOwnerByNaturalPersonId(naturalPersonId);
+        /* delete phone numbers associated with owner (natural person) */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM phone_number WHERE ownership_ref=?");
+            statement.setInt(1, owner.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        /* delete owner */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM ownership WHERE natural_person_ref=?");
+            statement.setInt(1, owner.getOwnerId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        /* delete natural person */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM natural_person WHERE id=?");
+            statement.setInt(1, naturalPersonId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static LegalEntity saveLegalEntity(String name, Address address) {
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO legal_entity (name, address_ref) VALUES (?, ?)");
@@ -323,6 +355,38 @@ public class DBInterfaceProvider {
             System.out.println(e.getMessage());
         }
         return legalEntity;
+    }
+
+    public static void deleteLegalEntity(LegalEntity legalEntity) {
+        deleteLegalEntity(legalEntity.getId());
+    }
+
+    public static void deleteLegalEntity(int legalEntityId) {
+        Owner owner = getOwnerByLegalEntityId(legalEntityId);
+        /* delete phone numbers associated with owner (legal entity) */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM phone_number WHERE ownership_ref=?");
+            statement.setInt(1, owner.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        /* delete owner */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM ownership WHERE legal_entity_ref=?");
+            statement.setInt(1, owner.getOwnerId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        /* delete legal entity */
+        try {
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM legal_entity WHERE id=?");
+            statement.setInt(1, legalEntityId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void updateLegalEntity(int id, String name) {
