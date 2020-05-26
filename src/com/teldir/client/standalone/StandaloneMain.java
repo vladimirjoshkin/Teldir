@@ -147,11 +147,20 @@ public class StandaloneMain {
             public void handleEvent(Event event) {
                 CityCodeReport cityCodeReport = new CityCodeReport(DBInterfaceProvider.getCitiesArrayList());
                 System.out.println(cityCodeReport.getReport());
+                FileUtils.saveFile(shell, "cityCodeReport.html", cityCodeReport.getReport());
             }
         });
 
         MenuItem createNewSpecificNaturalPersonNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
         createNewSpecificNaturalPersonNumbersItem.setText("Create new Natural Person Numbers Report...");
+
+        createNewSpecificNaturalPersonNumbersItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                CitySelectWindow citySelectWindow = new CitySelectWindow(display);
+                citySelectWindow.open();
+            }
+        });
 
         MenuItem createNewLegalEntityNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
         createNewLegalEntityNumbersItem.setText("Create new Legal Entity Numbers Report...");

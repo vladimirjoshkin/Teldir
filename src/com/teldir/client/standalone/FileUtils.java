@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 public class FileUtils {
     public static void saveFile(Shell shell, String fileName, String content) {
@@ -13,12 +14,14 @@ public class FileUtils {
         fileDialog.setFileName(fileName);
         String dest = fileDialog.open();
         System.out.println(dest);
-        try {
-            FileWriter fileWriter = new FileWriter(dest);
-            fileWriter.write(content);
-            fileWriter.close();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+        if (Objects.nonNull(dest)) {
+            try {
+                FileWriter fileWriter = new FileWriter(dest);
+                fileWriter.write(content);
+                fileWriter.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 }

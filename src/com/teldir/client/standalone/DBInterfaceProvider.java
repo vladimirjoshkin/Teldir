@@ -152,6 +152,20 @@ public class DBInterfaceProvider {
         return cities;
     }
 
+    public static HashMap<String, Integer> getCities() {
+        HashMap<String, Integer> cities = new HashMap<String, Integer>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM city");
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                cities.put(result.getString("name"), result.getInt("id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return cities;
+    }
+
     public static ArrayList<City> getCitiesArrayList() {
         ArrayList<City> cities = new ArrayList<City>();
         try {
@@ -437,6 +451,22 @@ public class DBInterfaceProvider {
             System.out.println(e.getMessage());
         }
         return naturalPerson;
+    }
+
+    public static ArrayList<NaturalPerson> getNaturalPersons(City livingCity) {
+        ArrayList<NaturalPerson> naturalPersons = new ArrayList<NaturalPerson>();
+        ResultSet naturalPersonSet = getNaturalPersons();
+        try {
+            while(naturalPersonSet.next()) {
+                NaturalPerson naturalPerson = getNaturalPerson(naturalPersonSet.getInt("id"));
+                if(naturalPerson.getLivingAddress().getCity().getId() == livingCity.getId()) {
+                    naturalPersons.add(naturalPerson);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return naturalPersons;
     }
 
     public static NaturalPerson updateNaturalPerson(int id, String firstName, String familyName, String patronymic, String dateOfBirth) {
