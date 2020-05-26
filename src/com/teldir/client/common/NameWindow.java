@@ -49,6 +49,14 @@ public class NameWindow {
         shell.open();
     }
 
+    public String getContentString() {
+        return txtName.getText();
+    }
+
+    public Integer getContentInteger() {
+        return Integer.parseInt(txtName.getText());
+    }
+
     private void construct(Display display) {
         shell = new Shell(display);
         shell.setLayout(new GridLayout(3, false));

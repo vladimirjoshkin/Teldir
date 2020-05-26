@@ -6,10 +6,6 @@ public class City {
     private String name;
     private int code;
 
-    public City(int id) {
-        this.id = id;
-    }
-
     public City(int id, District district, String name, int code) {
         this.id = id;
         this.district = district;

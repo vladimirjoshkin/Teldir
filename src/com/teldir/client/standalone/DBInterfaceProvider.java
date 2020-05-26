@@ -152,6 +152,20 @@ public class DBInterfaceProvider {
         return cities;
     }
 
+    public static ArrayList<City> getCitiesArrayList() {
+        ArrayList<City> cities = new ArrayList<City>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM city");
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                cities.add(new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"), result.getInt("area_code")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return cities;
+    }
+
     public static City getCity(int id) {
         City city = null;
         try {

@@ -1,6 +1,7 @@
 package com.teldir.client.standalone;
 
 import com.teldir.core.Address;
+import com.teldir.core.report.CityCodeReport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import com.teldir.client.common.*;
@@ -130,6 +131,33 @@ public class StandaloneMain {
                 listWindow.open();
             }
         });
+
+        /* Report menu */
+        MenuItem reportItem = new MenuItem(bar, SWT.CASCADE);
+        reportItem.setText("&Report");
+
+        Menu reportSubmenu = new Menu(shell, SWT.DROP_DOWN);
+        reportItem.setMenu(reportSubmenu);
+
+        MenuItem createNewCityCodeReportItem = new MenuItem(reportSubmenu, SWT.PUSH);
+        createNewCityCodeReportItem.setText("Create new City Code Report...");
+
+        createNewCityCodeReportItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                CityCodeReport cityCodeReport = new CityCodeReport(DBInterfaceProvider.getCitiesArrayList());
+                System.out.println(cityCodeReport.getReport());
+            }
+        });
+
+        MenuItem createNewSpecificNaturalPersonNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
+        createNewSpecificNaturalPersonNumbersItem.setText("Create new Natural Person Numbers Report...");
+
+        MenuItem createNewLegalEntityNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
+        createNewLegalEntityNumbersItem.setText("Create new Legal Entity Numbers Report...");
+
+        MenuItem createNewSpecificLegalEntityNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
+        createNewSpecificLegalEntityNumbersItem.setText("Create new Specific Legal Entity Numbers Report...");
 
         /* Debug */
         MenuItem debugItem = new MenuItem(bar, SWT.CASCADE);
