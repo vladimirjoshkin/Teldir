@@ -23,23 +23,30 @@ public class CityNaturalPersonPhoneNumbersReport extends Report {
 
         ArrayList<String> orderedList = new ArrayList<String>();
         for(int i = 0; i < naturalPersons.size(); i++) {
-            orderedList.add(naturalPersons.get(i).getFamilyName());
+            if(!orderedList.contains(naturalPersons.get(i).getFamilyName())) {
+                orderedList.add(naturalPersons.get(i).getFamilyName());
+            }
         }
         orderedList.sort(Comparator.naturalOrder());
         for(int i = 0; i < orderedList.size(); i++) {
-            NaturalPerson naturalPerson = getNaturalPerson(orderedList.get(i));
-            tableContent += tr(td(naturalPerson.getFamilyName() + " " + naturalPerson.getFirstName() + " " + naturalPerson.getPatronymic()) +
-                    td(naturalPerson.getPhoneNumbersAsString()));
+            ArrayList<NaturalPerson> array = new ArrayList<NaturalPerson>();
+            array = getNaturalPersons(orderedList.get(i));
+            for(int j = 0; j < array.size(); j++) {
+                NaturalPerson naturalPerson = array.get(j);
+                tableContent += tr(td(naturalPerson.getFamilyName() + " " + naturalPerson.getFirstName() + " " + naturalPerson.getPatronymic()) +
+                        td(naturalPerson.getPhoneNumbersAsString()));
+            }
         }
         return tableContent;
     }
 
-    private NaturalPerson getNaturalPerson(String familyName) {
+    private ArrayList<NaturalPerson> getNaturalPersons(String familyName) {
+        ArrayList<NaturalPerson> array = new ArrayList<NaturalPerson>();
         for(int i = 0; i < naturalPersons.size(); i++) {
             if(familyName.equals(naturalPersons.get(i).getFamilyName())) {
-                return naturalPersons.get(i);
+                array.add(naturalPersons.get(i));
             }
         }
-        return null;
+        return array;
     }
 }
