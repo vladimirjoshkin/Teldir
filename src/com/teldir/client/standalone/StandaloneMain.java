@@ -2,6 +2,7 @@ package com.teldir.client.standalone;
 
 import com.teldir.core.Address;
 import com.teldir.core.report.CityCodeReport;
+import com.teldir.core.report.LegalEntityPhoneNumbersReport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import com.teldir.client.common.*;
@@ -165,8 +166,25 @@ public class StandaloneMain {
         MenuItem createNewLegalEntityNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
         createNewLegalEntityNumbersItem.setText("Create new Legal Entity Numbers Report...");
 
+        createNewLegalEntityNumbersItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                LegalEntityPhoneNumbersReport report = new LegalEntityPhoneNumbersReport(DBInterfaceProvider.getLegalEntitiesArrayList());
+                FileUtils.saveFile(shell, "legalEntityPhoneNumbersReport.html", report.getReport());
+            }
+        });
+
         MenuItem createNewSpecificLegalEntityNumbersItem = new MenuItem(reportSubmenu, SWT.PUSH);
         createNewSpecificLegalEntityNumbersItem.setText("Create new Specific Legal Entity Numbers Report...");
+
+
+        createNewSpecificLegalEntityNumbersItem.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                CityAndHeadingSelectWindow cityAndHeadingSelectWindow = new CityAndHeadingSelectWindow(display);
+                cityAndHeadingSelectWindow.open();
+            }
+        });
 
         /* Debug */
         MenuItem debugItem = new MenuItem(bar, SWT.CASCADE);
