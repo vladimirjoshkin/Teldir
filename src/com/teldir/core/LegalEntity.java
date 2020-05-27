@@ -36,6 +36,10 @@ public class LegalEntity {
         return address;
     }
 
+    public ArrayList<PhoneNumber> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
     public String[] getPhoneNumbersAsStringArray() {
         String[] outArr = new String[phoneNumbers.size()];
         for (int i = 0; i < phoneNumbers.size(); i++) {
