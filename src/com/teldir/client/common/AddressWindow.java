@@ -73,7 +73,7 @@ public class AddressWindow {
     private void construct(Display display) {
         shell = new Shell(display);
         shell.setText("Address Shell");
-        shell.setSize(900, 360);
+        //shell.setSize(900, 360);
         shell.setLayout(new GridLayout(3, false));
 
         lblIndex = new Label(shell, SWT.NONE);
@@ -251,6 +251,7 @@ public class AddressWindow {
 
             }
         });
+        shell.pack();
     }
 
     private boolean filledCorrectly() {

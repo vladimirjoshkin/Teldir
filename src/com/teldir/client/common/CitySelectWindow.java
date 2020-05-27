@@ -32,7 +32,7 @@ public class CitySelectWindow {
     private void construct(Display display) {
         shell = new Shell(display);
         shell.setLayout(new GridLayout(3, false));
-        shell.setSize(450, 150);
+        //shell.setSize(450, 150);
 
         comboCity = new Combo(shell, SWT.NONE);
         comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
@@ -62,6 +62,7 @@ public class CitySelectWindow {
                 shell.close();
             }
         });
+        shell.pack();
     }
 
     public Button getBtnSave() {

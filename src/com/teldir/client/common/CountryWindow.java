@@ -119,6 +119,7 @@ public class CountryWindow {
                 }
             }
         });
+        shell.pack();
     }
 
     private boolean countryWithEnteredNameAlreadyExists() {

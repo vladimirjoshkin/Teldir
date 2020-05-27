@@ -244,6 +244,7 @@ public class PhoneNumberWindow {
                 }
             }
         });
+        shell.pack();
     }
 
     private void setItems(Combo combo, HashMap<String, Integer> hashMap) {

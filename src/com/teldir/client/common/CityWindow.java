@@ -35,7 +35,7 @@ public class CityWindow {
     public void construct(Display display) {
         shell = new Shell(display);
         shell.setText("SWT Application");
-        shell.setSize(500, 190);
+        //shell.setSize(500, 190);
         shell.setLayout(new GridLayout(3, false));
 
         lblCityName = new Label(shell, SWT.NONE);
@@ -103,6 +103,7 @@ public class CityWindow {
                 }
             }
         });
+        shell.pack();
     }
 
     private boolean cityWithEnteredNameAlreadyExistsInDistrict() {

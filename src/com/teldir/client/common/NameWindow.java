@@ -118,6 +118,7 @@ public class NameWindow {
                 }
             }
         });
+        shell.pack();
     }
 
     public Button getBtnSave() {

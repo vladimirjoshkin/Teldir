@@ -260,6 +260,7 @@ public class LegalEntityWindow {
                 }
             }
         });
+        shell.pack();
     }
 
     private boolean filledCorrectly() {
