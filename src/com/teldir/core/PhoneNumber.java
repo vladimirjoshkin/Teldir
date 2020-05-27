@@ -50,4 +50,13 @@ public class PhoneNumber {
         System.out.println("PhoneNumber getBody number=" + number + " body=" + number.split(Pattern.quote(")"))[1]);
         return Integer.parseInt(number.split(Pattern.quote(")"))[1]);
     }
+
+    public boolean isSame(PhoneNumber phoneNumber) {
+        if(getCountryCode() == phoneNumber.getCountryCode() &&
+           getAreaCode() == phoneNumber.getAreaCode() &&
+           getBody() == phoneNumber.getBody()) {
+            return true;
+        }
+        return false;
+    }
 }
