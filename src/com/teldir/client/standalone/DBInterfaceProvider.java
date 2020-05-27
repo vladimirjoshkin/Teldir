@@ -193,6 +193,19 @@ public class DBInterfaceProvider {
         return city;
     }
 
+    public static City getCityByCode(int code) {
+        City city = null;
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM city WHERE area_code=?");
+            statement.setInt(1, code);
+            ResultSet result = statement.executeQuery();
+            city = new City(result.getInt("id"), getDistrict(result.getInt("district_ref")), result.getString("name"), result.getInt("area_code"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return city;
+    }
+
     public static Address saveAddress(String index, int cityId, String street, String building) {
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO address (post_index, city_ref, street, building) VALUES (?, ?, ?, ?)");
@@ -710,6 +723,56 @@ public class DBInterfaceProvider {
         }
         return legalEntity;
     }
+
+    public static ArrayList<LegalEntity> getLegalEntitiesArrayList() {
+        ArrayList<LegalEntity> legalEntities = new ArrayList<LegalEntity>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity");
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                int legalEntityId = result.getInt("id");
+                Owner owner = getOwnerByLegalEntityId(legalEntityId);
+                if(Objects.isNull(owner)) {
+                    System.out.println("owner is null at " + getLegalEntityWithoutOwner(legalEntityId).getFullName() + " ID=" + legalEntityId);
+                }
+                legalEntities.add(new LegalEntity(result.getInt("id"),
+                        result.getString("name"),
+                        getAddress(result.getInt("address_ref")),
+                        owner,
+                        getPhoneNumbers(owner)));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return legalEntities;
+    }
+
+    public static ArrayList<LegalEntity> getLegalEntitiesArrayList(City city) {
+        ArrayList<LegalEntity> legalEntities = new ArrayList<LegalEntity>();
+        try {
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM legal_entity");
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                int legalEntityId = result.getInt("id");
+                Owner owner = getOwnerByLegalEntityId(legalEntityId);
+                if(Objects.isNull(owner)) {
+                    System.out.println("owner is null at " + getLegalEntityWithoutOwner(legalEntityId).getFullName() + " ID=" + legalEntityId);
+                }
+                LegalEntity legalEntity = new LegalEntity(result.getInt("id"),
+                        result.getString("name"),
+                        getAddress(result.getInt("address_ref")),
+                        owner,
+                        getPhoneNumbers(owner));
+                if(legalEntity.getAddress().getCity().isSame(city)) {
+                    legalEntities.add(legalEntity);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return legalEntities;
+    }
+
 
     private static LegalEntity getLegalEntityWithoutOwner(int id) {
         LegalEntity legalEntity = null;
