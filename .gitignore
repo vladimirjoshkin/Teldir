@@ -1,6 +1,7 @@
 .idea
 out/
 ignore/
+src/META-INF/*
 *.jar
 *.zip
 *.rar
