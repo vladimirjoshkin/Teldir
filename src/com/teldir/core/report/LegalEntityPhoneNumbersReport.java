@@ -74,22 +74,30 @@ public class LegalEntityPhoneNumbersReport extends Report {
         }
         orderedListCity.sort(Comparator.naturalOrder());
         orderedListHeading.sort(Comparator.naturalOrder());
-
+        System.out.println("! Headings: " + headings.get(0).getName());
+        System.out.println(orderedListHeading.toString());
         ArrayList<PhoneNumber> mobileNumbers = new ArrayList<PhoneNumber>();
-
         for(int i = 0; i < orderedListCity.size(); i++) {
             for(int j = 0; j < orderedListHeading.size(); j++) {
-                for(int k = 0; k < legalEntities.size(); k++) {
-                    for(int z = 0; z < legalEntities.get(k).getPhoneNumbers().size(); z++) {
-                        LegalEntity legalEntity = legalEntities.get(k);
-                        City city = getCity(orderedListCity.get(i));
-                        Heading heading = getHeading(orderedListHeading.get(j));
-                        PhoneNumber phoneNumber = legalEntity.getPhoneNumbers().get(z);
-                        System.out.println(city + " " + heading.getName() + " " + phoneNumber.getNumber() + " " + phoneNumber.getAreaCode() + " " + phoneNumber.getHeading().getName());
-                        if(phoneNumber.getAreaCode() == city.getCode() && phoneNumber.getHeading().getId() == heading.getId()) {
-                            tableContent += tr(td(legalEntity.getFullName()) + td(city.getName() + ", " + city.getDistrict().getCountry().getName()) + td(heading.getName()) + td(phoneNumber.getNumber()));
-                        } else if(Objects.isNull(getCityByCode(phoneNumber.getAreaCode())) && phoneNumber.getHeading().getId() == heading.getId()) {
-                            mobileNumbers.add(phoneNumber);
+                if (getHeadingsString().contains(orderedListHeading.get(j))) {
+                    for (int k = 0; k < legalEntities.size(); k++) {
+                        for (int z = 0; z < legalEntities.get(k).getPhoneNumbers().size(); z++) {
+                            LegalEntity legalEntity = legalEntities.get(k);
+                            City city = getCity(orderedListCity.get(i));
+                            Heading heading = getHeading(orderedListHeading.get(j));
+                            PhoneNumber phoneNumber = legalEntity.getPhoneNumbers().get(z);
+                            System.out.println(city.toString());
+                            System.out.println(heading.toString());
+                            System.out.println(phoneNumber.getNumber());
+                            System.out.println(phoneNumber.getAreaCode());
+                            System.out.println(phoneNumber.getHeading().getName());
+                            System.out.println("i = " + i);
+                            /* System.out.println(city + " " + heading.getName() + " " + phoneNumber.getNumber() + " " + phoneNumber.getAreaCode() + " " + phoneNumber.getHeading().getName()); */
+                            if (phoneNumber.getAreaCode() == city.getCode() && phoneNumber.getHeading().getId() == heading.getId()) {
+                                tableContent += tr(td(legalEntity.getFullName()) + td(city.getName() + ", " + city.getDistrict().getCountry().getName()) + td(heading.getName()) + td(phoneNumber.getNumber()));
+                            } else if (Objects.isNull(getCityByCode(phoneNumber.getAreaCode())) && phoneNumber.getHeading().getId() == heading.getId()) {
+                                mobileNumbers.add(phoneNumber);
+                            }
                         }
                     }
                 }
@@ -111,6 +119,14 @@ public class LegalEntityPhoneNumbersReport extends Report {
             }
         }
         return null;
+    }
+
+    public ArrayList<String> getHeadingsString() {
+        ArrayList<String> headingsString = new ArrayList<String>();
+        for(int i = 0; i < headings.size(); i++) {
+            headingsString.add(headings.get(i).getName());
+        }
+        return headingsString;
     }
 
     public City getCity(String name) {
